@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  name        String
+  email       String    @unique
+  passwordHash String
+  preference  Preference @default(MORNING)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  teams       TeamMember[]
+  tasks       Task[]    @relation("AssignedTasks")
+  calendar    CalendarEvent[]
+  createdTeams Team[]    @relation("TeamCreator")
+  createdProjects Project[] @relation("ProjectCreator")
+  payments    Payment[]  @relation("PaidByUser")
+}
+
+model Team {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String?
+  createdBy   User?        @relation("TeamCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById Int?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  members     TeamMember[]
+  projects    Project[]
+  payments    Payment[]
+}
+
+model TeamMember {
+  id        Int      @id @default(autoincrement())
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  role      Role     @default(MEMBER)
+  joinedAt  DateTime @default(now())
+
+  @@unique([teamId, userId])
+}
+
+model Project {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String?
+  team        Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId      Int
+  createdBy   User?        @relation("ProjectCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById Int?
+  deadline    DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  tasks       Task[]
+}
+
+model Task {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String?
+  status      Status       @default(PENDING)
+  assignedTo  User?        @relation("AssignedTasks", fields: [assignedToId], references: [id], onDelete: SetNull)
+  assignedToId Int?
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   Int
+  priority    Priority     @default(MEDIUM)
+  dependentTasks Task[]    @relation("Dependency")
+  dependency  Task?        @relation("Dependency", fields: [dependencyTaskId], references: [id], onDelete: SetNull)
+  dependencyTaskId Int?
+  deadline    DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  calendar    CalendarEvent[]
+}
+
+model Payment {
+  id          Int          @id @default(autoincrement())
+  team        Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId      Int
+  amount      Float
+  paidBy      User?        @relation("PaidByUser", fields: [paidById], references: [id], onDelete: SetNull)
+  paidById    Int?
+  paymentDate DateTime     @default(now())
+  description String?
+}
+
+model CalendarEvent {
+  id        Int       @id @default(autoincrement())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  task      Task?     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId    Int?
+  eventDate DateTime
+  createdAt DateTime  @default(now())
+}
+
+enum Preference {
+  MORNING
+  AFTERNOON
+  NIGHT
+}
+
+enum Role {
+  MEMBER
+  TEAM_LEAD
+}
+
+enum Status {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  DELAYED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}

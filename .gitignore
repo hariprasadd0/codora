@@ -1,0 +1,54 @@
+TODO.TXT
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+.pnpm-debug.log
+
+# TypeScript
+*.tsbuildinfo
+dist/
+
+# Environment variables
+.env
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-debug.log*
+.log
+
+# Prisma
+prisma/.env
+prisma/migrations/
+.prisma
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Other
+*.swp
+*.bak
+*.tmp
+*.backup
+*.old

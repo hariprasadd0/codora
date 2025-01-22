@@ -1,4 +1,4 @@
-import prisma from '../../../core/config/prisma';
+import prisma from '../../../../core/config/prisma';
 
 type User = {
   username: string;
@@ -12,6 +12,17 @@ export const createUser = async (user: User) => {
       email: user.email,
       name: user.username,
       passwordHash: user.password,
+    },
+  });
+};
+
+export const userById = async (userId: number) => {
+  return await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    omit: {
+      passwordHash: true,
     },
   });
 };

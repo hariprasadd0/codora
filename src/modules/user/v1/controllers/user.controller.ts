@@ -26,3 +26,20 @@ export const getUserById = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 });
+
+export const updateUser = asyncHandler(async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  const user = req.body;
+  if (isNaN(id)) {
+    return res.status(400).json({ error: 'Invalid user ID' });
+  }
+  const updatedUser = await userService.updateUserService(id, user);
+
+  res.status(200).json({
+    data: updatedUser,
+    meta: {
+      version: '1.0',
+      timestamp: new Date().toISOString(),
+    },
+  });
+});

@@ -26,3 +26,22 @@ export const userById = async (userId: number) => {
     },
   });
 };
+
+export const updateUserById = async (userId: number, user: Partial<User>) => {
+  return await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      ...user,
+    },
+  });
+};
+
+export const deleteUserById = async (userId: number) => {
+  return await prisma.user.delete({
+    where: {
+      id: userId,
+    },
+  });
+};

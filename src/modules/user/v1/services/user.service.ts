@@ -23,3 +23,29 @@ export const getUserByIdService = async (userId: number) => {
   }
   return user;
 };
+
+export const updateUserService = async (userId: number, user: User) => {
+  if (typeof userId !== 'number' || userId <= 0) {
+    throw new Error('Invalid user id');
+  }
+
+  const updatedUser = await userRepository.updateUserById(userId, user);
+
+  if (!updatedUser) {
+    throw new Error('User not found');
+  }
+  return updatedUser;
+};
+
+export const deleteUserService = async (userId: number) => {
+  if (typeof userId !== 'number' || userId <= 0) {
+    throw new Error('Invalid user id');
+  }
+
+  const deletedUser = await userRepository.deleteUserById(userId);
+
+  if (!deletedUser) {
+    throw new Error('User not found');
+  }
+  return deletedUser;
+};

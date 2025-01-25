@@ -1,14 +1,66 @@
+/**
+ * Service layer for user management operations
+ * @module services/user.service
+ */
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from '../../../../core/utils/token';
 import * as userRepository from '../repositories/user.repository';
+import * as bcrypt from 'bcrypt';
+import logger from '../../../../core/utils/logger';
 
 type User = {
+  id: number;
   username: string;
   email: string;
   password: string;
-  role: string;
+  refreshToken?: string;
 };
+
 export const createNewUser = async (user: User) => {
-  //aditional buisness logic
-  return await userRepository.createUser(user);
+  if (user) {
+    user.password = await bcrypt.hash(user.password, 10);
+  }
+  const userExist = await userRepository.userByEmail(user.email);
+
+  if (userExist) {
+    throw new Error('User already exists');
+  }
+  const accessToken = generateAccessToken(user.id);
+  const refreshToken = generateRefreshToken(user.id);
+  const newUser = await userRepository.createUser(user);
+  await userRepository.updateUserById(newUser.id, {
+    refreshToken: refreshToken,
+  });
+
+  return { accessToken, refreshToken, newUser };
+};
+
+export const loginUserService = async (user: User) => {
+  const userFound = await userRepository.userByEmail(user.email);
+
+  if (!userFound) {
+    throw new Error('User not found');
+  }
+
+  const isPasswordMatch = await bcrypt.compare(
+    user.password,
+    userFound.passwordHash
+  );
+
+  if (!isPasswordMatch) {
+    throw new Error('Invalid password');
+  }
+
+  const accessToken = generateAccessToken(userFound.id);
+  const refreshToken = generateRefreshToken(userFound.id);
+
+  await userRepository.updateUserById(userFound.id, {
+    refreshToken: refreshToken,
+  });
+
+  return { accessToken, refreshToken };
 };
 
 export const getUserByIdService = async (userId: number) => {
@@ -27,6 +79,9 @@ export const getUserByIdService = async (userId: number) => {
 export const updateUserService = async (userId: number, user: User) => {
   if (typeof userId !== 'number' || userId <= 0) {
     throw new Error('Invalid user id');
+  }
+  if (user.password) {
+    user.password = await bcrypt.hash(user.password, 10);
   }
 
   const updatedUser = await userRepository.updateUserById(userId, user);

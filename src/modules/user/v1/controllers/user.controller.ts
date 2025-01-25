@@ -1,15 +1,35 @@
 import { Request, Response } from 'express';
 import * as userService from '../services/user.service';
 import asyncHandler from '../../../../core/utils/asyncHandler';
+import logger from '../../../../core/utils/logger';
 
 export const createUser = asyncHandler(async (req: Request, res: Response) => {
   const user = req.body;
+  const { newUser, accessToken, refreshToken } =
+    await userService.createNewUser(user);
 
-  const newUser = await userService.createNewUser(user);
-
-  res.status(201).json({ data: newUser });
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+  res.status(201).json({ data: newUser, accessToken });
 });
 
+export const loginUser = asyncHandler(async (req: Request, res: Response) => {
+  const user = req.body;
+  logger.info('User logged in', { email: user.email });
+  const { accessToken, refreshToken } =
+    await userService.loginUserService(user);
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  res.status(201).json({ accessToken });
+});
 export const getUserById = asyncHandler(async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
 
@@ -17,6 +37,8 @@ export const getUserById = asyncHandler(async (req: Request, res: Response) => {
     return res.status(400).json({ error: 'Invalid user ID' });
   }
   const user = await userService.getUserByIdService(id);
+
+  logger.info(`User found: id=${user.id}`);
 
   res.status(200).json({
     data: user,

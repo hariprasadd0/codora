@@ -9,14 +9,7 @@ import {
 import * as userRepository from '../repositories/user.repository';
 import * as bcrypt from 'bcrypt';
 import logger from '../../../../core/utils/logger';
-
-type User = {
-  id: number;
-  username: string;
-  email: string;
-  password: string;
-  refreshToken?: string;
-};
+import User from '../types/user';
 
 export const createNewUser = async (user: User) => {
   if (user) {

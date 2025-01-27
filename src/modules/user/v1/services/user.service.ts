@@ -56,6 +56,21 @@ export const loginUserService = async (user: User) => {
   return { accessToken, refreshToken };
 };
 
+export const logoutUserService = async (user: User) => {
+  const userFound = await userRepository.userByEmail(user.email);
+
+  if (!userFound) {
+    throw new Error('User not found');
+  }
+
+  await userRepository.logoutUser(userFound.email);
+};
+
+export const getAllUsersService = async () => {
+  const users = await userRepository.getAllUsers();
+
+  return users;
+};
 export const getUserByIdService = async (userId: number) => {
   if (typeof userId !== 'number' || userId <= 0) {
     throw new Error('Invalid user id');

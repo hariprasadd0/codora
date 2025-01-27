@@ -54,8 +54,8 @@ model Project {
   id          Int          @id @default(autoincrement())
   name        String
   description String?
-  team        Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  teamId      Int
+  team        Team?         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId      Int?
   createdBy   User?        @relation("ProjectCreator", fields: [createdById], references: [id], onDelete: SetNull)
   createdById Int?
   deadline    DateTime?

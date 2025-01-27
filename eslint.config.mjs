@@ -22,7 +22,7 @@ export default [
       ...prettierConfig.rules,
       '@typescript-eslint/no-unused-vars': ['warn'],
       'prettier/prettier': ['error'],
-      // 'no-console': 'warn',
+      'no-console': 'warn',
     },
     settings: {},
   },

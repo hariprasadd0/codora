@@ -11,6 +11,25 @@ export const createUser = async (user: User) => {
   });
 };
 
+export const logoutUser = async (email: string) => {
+  return await prisma.user.update({
+    where: {
+      email: email,
+    },
+    data: {
+      refreshToken: '',
+    },
+  });
+};
+
+export const getAllUsers = async () => {
+  return await prisma.user.findMany({
+    omit: {
+      passwordHash: true,
+      refreshToken: true,
+    },
+  });
+};
 export const userById = async (userId: number) => {
   return await prisma.user.findUnique({
     where: {

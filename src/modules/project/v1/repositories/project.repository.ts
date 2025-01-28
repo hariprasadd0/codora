@@ -29,3 +29,9 @@ export const updateProjectById = async (
     },
   });
 };
+
+export const deleteProject = async (projectId: number) => {
+  return await prisma.project.delete({
+    where: { id: projectId },
+  });
+};

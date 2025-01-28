@@ -24,3 +24,7 @@ export const updateProjectService = async (
 ) => {
   await projectRepository.updateProjectById(projectId, project);
 };
+
+export const deleteProjectService = async (projectId: number) => {
+  await projectRepository.deleteProject(projectId);
+};

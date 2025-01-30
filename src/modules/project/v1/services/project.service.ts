@@ -15,7 +15,7 @@ export const getProjectService = async (projectId: number) => {
 };
 
 export const listProjectService = async (userId: number) => {
-  await projectRepository.listProject(userId);
+  return await projectRepository.listProject(userId);
 };
 
 export const updateProjectService = async (

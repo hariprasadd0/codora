@@ -6,26 +6,28 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from '../../../../core/utils/token';
-import * as userRepository from '../repositories/user.repository';
+import { userRepository } from '../repositories/user.repository';
 import * as bcrypt from 'bcrypt';
 import logger from '../../../../core/utils/logger';
 import User from '../types/user';
+import { createUserSchema } from '../schema/user.schema';
 
-export const createNewUser = async (user: User) => {
-  if (user) {
-    user.password = await bcrypt.hash(user.password, 10);
-  }
-  const userExist = await userRepository.userByEmail(user.email);
+export const createNewUser = async (user: unknown) => {
+  const validated = createUserSchema.parse(user);
 
-  if (userExist) {
-    throw new Error('User already exists');
-  }
-  const accessToken = generateAccessToken(user.id);
-  const refreshToken = generateRefreshToken(user.id);
-  const newUser = await userRepository.createUser(user);
-  await userRepository.updateUserById(newUser.id, {
-    refreshToken: refreshToken,
+  const userExist = await userRepository.userByEmail(validated.email);
+
+  if (userExist) throw new Error('User already exists');
+
+  const hashedPassword = await bcrypt.hash(validated.password, 10);
+
+  const newUser = await userRepository.create({
+    ...validated,
+    password: hashedPassword,
   });
+  const accessToken = generateAccessToken(newUser.id);
+  const refreshToken = generateRefreshToken(newUser.id);
+  await userRepository.updateRefreshToken(newUser.id, refreshToken);
 
   return { accessToken, refreshToken, newUser };
 };
@@ -49,9 +51,7 @@ export const loginUserService = async (user: User) => {
   const accessToken = generateAccessToken(userFound.id);
   const refreshToken = generateRefreshToken(userFound.id);
 
-  await userRepository.updateUserById(userFound.id, {
-    refreshToken: refreshToken,
-  });
+  await userRepository.updateRefreshToken(userFound.id, refreshToken);
 
   return { accessToken, refreshToken };
 };
@@ -111,4 +111,36 @@ export const deleteUserService = async (userId: number) => {
     throw new Error('User not found');
   }
   return deletedUser;
+};
+
+export const passwordResetService = async (email: string, password: string) => {
+  const userEmail = email.trim();
+  const userFound = await userRepository.userByEmail(userEmail);
+
+  if (!userFound) {
+    throw new Error('User not found');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await userRepository.passwordReset(userFound.email, hashedPassword);
+};
+
+export const setPreferenceService = async (
+  userId: number,
+  preference: string
+) => {
+  if (typeof userId !== 'number' || userId <= 0) {
+    throw new Error('Invalid user id');
+  }
+
+  const validPreference = ['MORNING', 'AFTERNOON', 'NIGHT'];
+  if (!validPreference.includes(preference.toUpperCase())) {
+    throw new Error('Invalid preference');
+  }
+  const changedPreference = await userRepository.setPreference(
+    userId,
+    preference.toUpperCase()
+  );
+  return changedPreference;
 };

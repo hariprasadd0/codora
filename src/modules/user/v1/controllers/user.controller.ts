@@ -41,6 +41,14 @@ export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
   res.clearCookie('refreshToken');
   res.status(200).json({ message: 'Logout Success' });
 });
+export const passwordReset = asyncHandler(
+  //controller for password reset
+  async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+    await userService.passwordResetService(email, password);
+    res.status(200).json({ message: 'Password Reset Success' });
+  }
+);
 
 export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
   const users = await userService.getAllUsersService();
@@ -90,3 +98,22 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 });
+
+export const setPreference = asyncHandler(
+  async (req: Request, res: Response) => {
+    const id = parseInt((req as any).user);
+    const preference = req.body.preference;
+    if (isNaN(id)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+    const updatedUser = await userService.setPreferenceService(id, preference);
+
+    res.status(200).json({
+      data: updatedUser,
+      meta: {
+        version: '1.0',
+        timestamp: new Date().toISOString(),
+      },
+    });
+  }
+);

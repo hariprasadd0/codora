@@ -3,6 +3,7 @@ import cors from 'cors';
 import { Request, Response, NextFunction } from 'express';
 import userRoutes from './modules/user/v1/routes/user.route';
 import projectRoutes from './modules/project/v1/routes/project.route';
+import teamRoutes from './modules/teams/v1/routes/team.route';
 import logger from './core/utils/logger';
 
 const app = express();
@@ -26,6 +27,6 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 app.use('/v1/users', userRoutes);
 app.use('/v1/projects', projectRoutes);
-// app.use('/v1/teams', teamRoutes);
+app.use('/v1/teams', teamRoutes);
 
 export default app;

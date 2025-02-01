@@ -8,14 +8,15 @@ import {
   getAllUsers,
 } from '../controllers/user.controller';
 import { validateSchema } from '../../../../core/middlewares/validateSchema';
-import { createUserSchema } from '../schema/user.schema';
+import { createUserSchema, loginUserSchema } from '../schema/user.schema';
+import { verifyJwt } from '../../../../core/middlewares/auth.middleware';
 const router = express.Router();
 
 router.post('/register', validateSchema(createUserSchema), createUser);
-router.post('/login', loginUser);
+router.post('/login', validateSchema(loginUserSchema), loginUser);
 router.post('/logout', logoutUser);
-router.get('/:id', getUserById);
-router.patch('/me', updateUser);
+router.get('/:id', verifyJwt, getUserById);
+router.patch('/me', verifyJwt, updateUser);
 
 router.get('/', getAllUsers);
 export default router;

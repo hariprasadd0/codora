@@ -1,4 +1,5 @@
 import express, { urlencoded } from 'express';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { Request, Response, NextFunction } from 'express';
 import userRoutes from './modules/user/v1/routes/user.route';
@@ -14,6 +15,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   logger.error(err.message);

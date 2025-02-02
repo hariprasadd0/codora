@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 import * as userService from '../services/user.service';
 import asyncHandler from '../../../../core/utils/asyncHandler';
 import logger from '../../../../core/utils/logger';
@@ -47,6 +48,29 @@ export const passwordReset = asyncHandler(
     const { email, password } = req.body;
     await userService.passwordResetService(email, password);
     res.status(200).json({ message: 'Password Reset Success' });
+  }
+);
+
+export const refreshToken = asyncHandler(
+  async (req: Request, res: Response) => {
+    const token = req.cookies.refreshToken;
+    logger.info('token', token);
+    if (!token) {
+      return res.status(401).json({ error: 'No refresh token provided' });
+    }
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_REFRESH_SECRET! as string
+    ) as { userId: number };
+    if (!decoded) {
+      return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+    }
+    const userId = decoded.userId;
+    const { accessToken } = await userService.refreshTokenService(
+      userId,
+      token
+    );
+    res.status(201).json({ accessToken });
   }
 );
 

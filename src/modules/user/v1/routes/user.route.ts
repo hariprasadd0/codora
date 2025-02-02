@@ -6,6 +6,7 @@ import {
   loginUser,
   logoutUser,
   getAllUsers,
+  refreshToken,
 } from '../controllers/user.controller';
 import { validateSchema } from '../../../../core/middlewares/validateSchema';
 import { createUserSchema, loginUserSchema } from '../schema/user.schema';
@@ -17,6 +18,7 @@ router.post('/login', validateSchema(loginUserSchema), loginUser);
 router.post('/logout', logoutUser);
 router.get('/:id', verifyJwt, getUserById);
 router.patch('/me', verifyJwt, updateUser);
+router.get('/refresh', refreshToken);
 
 router.get('/', getAllUsers);
 export default router;

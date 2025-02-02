@@ -98,4 +98,14 @@ export const userRepository = {
       },
     });
   },
+  getRefreshToken: async (userId: number) => {
+    return await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        refreshToken: true,
+      },
+    });
+  },
 };

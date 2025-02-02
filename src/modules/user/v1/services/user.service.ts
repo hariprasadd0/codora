@@ -55,7 +55,17 @@ export const loginUserService = async (user: User) => {
 
   return { accessToken, refreshToken };
 };
+export const refreshTokenService = async (userId: number, token: string) => {
+  const storedToken = await userRepository.getRefreshToken(userId);
+  if (!storedToken || !storedToken.refreshToken)
+    throw new Error('No user Found');
+  if (storedToken.refreshToken !== token) {
+    throw new Error('Refresh token mismatch');
+  }
+  const accessToken = generateAccessToken(userId);
 
+  return { accessToken };
+};
 export const logoutUserService = async (user: User) => {
   const userFound = await userRepository.userByEmail(user.email);
 

@@ -18,7 +18,7 @@ router.post('/login', validateSchema(loginUserSchema), loginUser);
 router.post('/logout', logoutUser);
 router.get('/:id', verifyJwt, getUserById);
 router.patch('/me', verifyJwt, updateUser);
-router.get('/refresh', refreshToken);
+router.post('/refresh', refreshToken);
 
 router.get('/', getAllUsers);
 export default router;

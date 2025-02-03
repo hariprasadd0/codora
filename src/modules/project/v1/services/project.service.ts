@@ -4,10 +4,14 @@
  */
 
 import * as projectRepository from '../repositories/project.repository';
-import { Project } from '../types/type';
+import {
+  createProjectSchema,
+  updateProjectSchema,
+} from '../schema/project.schema';
 
-export const createProjectService = async (project: Project) => {
-  await projectRepository.createProject(project);
+export const createProjectService = async (project: unknown) => {
+  const validated = createProjectSchema.parse(project);
+  await projectRepository.createProject(validated);
 };
 
 export const getProjectService = async (projectId: number) => {
@@ -15,16 +19,27 @@ export const getProjectService = async (projectId: number) => {
 };
 
 export const listProjectService = async (userId: number) => {
+  if (!userId) {
+    throw new Error('dd');
+  }
   return await projectRepository.listProject(userId);
 };
 
 export const updateProjectService = async (
   projectId: number,
-  project: Project
+  project: unknown
 ) => {
-  await projectRepository.updateProjectById(projectId, project);
+  const validated = updateProjectSchema.parse(project);
+  await projectRepository.updateProjectById(projectId, validated);
 };
 
 export const deleteProjectService = async (projectId: number) => {
   await projectRepository.deleteProject(projectId);
+};
+
+export const addCollaboratorService = async (
+  projectId: number,
+  memberId: number
+) => {
+  return await projectRepository.addMemberToProject(projectId, memberId);
 };

@@ -1,6 +1,7 @@
 import asyncHandler from '../../../../core/utils/asyncHandler';
 import { Request, Response } from 'express';
 import * as projectService from '../services/project.service';
+import logger from '../../../../core/utils/logger';
 
 export const createProjectController = asyncHandler(
   async (req: Request, res: Response) => {
@@ -20,7 +21,7 @@ export const getProjectController = asyncHandler(
 
 export const listProjectController = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = parseInt(req.params.userId); //or get userId from req.user
+    const userId = (req as any).user.userId;
     const projects = await projectService.listProjectService(userId);
     res.status(200).json({ projects });
   }
@@ -43,5 +44,20 @@ export const deleteProjectController = asyncHandler(
     const projectId = parseInt(req.params.projectId);
     await projectService.deleteProjectService(projectId);
     res.status(200).json({ message: 'Project deleted' });
+  }
+);
+
+export const convertToTeamController = asyncHandler(
+  async (req: Request, res: Response) => {
+    logger.info('Convert to team');
+    res.status(200).json({ message: 'Convert to team' });
+  }
+);
+
+export const addCollaboratorController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { projectId, memberId } = req.body;
+    await projectService.addCollaboratorService(projectId, memberId);
+    res.status(200).json({ message: 'Collaborator Added' });
   }
 );

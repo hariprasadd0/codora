@@ -1,7 +1,9 @@
 import express, { urlencoded } from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import { createServer } from 'http';
 import { Request, Response, NextFunction } from 'express';
+import { initializeServer } from './core/utils/socket';
 import userRoutes from './modules/user/v1/routes/user.route';
 import projectRoutes from './modules/project/v1/routes/project.route';
 import teamRoutes from './modules/teams/v1/routes/team.route';
@@ -13,6 +15,10 @@ const corsOptions = {
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,
 };
+
+const server = createServer(app);
+initializeServer(server);
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());

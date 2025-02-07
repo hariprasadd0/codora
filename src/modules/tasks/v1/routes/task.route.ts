@@ -22,13 +22,13 @@ router.post(
 
 //get single task
 
-router.get('/:id', verifyJwt, getTaskByIdController);
+router.get('/:taskId', verifyJwt, getTaskByIdController);
 
 //get all tasks for a project
 router.get('/:projectId', verifyJwt, getAllTasksController);
 
 //assign task to a user
-router.patch('/:id/assign', assignTaskController);
+router.patch('/:taskId/assign', assignTaskController);
 
 //update status
 router.patch(':id/status');
@@ -40,9 +40,9 @@ router.patch(':id/dependency');
 //remove dependency
 
 //update tasks
-router.put('/:id', verifyJwt, updateTaskController);
+router.put('/:taskId', verifyJwt, updateTaskController);
 
 //delete task
-router.delete('/:id', verifyJwt, deleteTaskController);
+router.delete('/:taskId', verifyJwt, deleteTaskController);
 
 export default router;

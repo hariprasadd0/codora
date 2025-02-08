@@ -10,9 +10,10 @@ datasource db {
 
 model User {
   id          Int       @id @default(autoincrement())
+  googleId    String?  @unique
   name        String
   email       String    @unique
-  passwordHash String
+  passwordHash String?
   refreshToken String?
   preference  Preference @default(MORNING)
   createdAt   DateTime  @default(now())

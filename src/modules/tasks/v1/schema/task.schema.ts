@@ -4,7 +4,7 @@ const Status = z.enum(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'DELAYED']);
 const Priority = z.enum(['LOW', 'MEDIUM', 'HIGH']);
 
 export const createTaskSchema = z.object({
-  name: z.string().min(1, 'Task name is required'),
+  name: z.string(),
   description: z.string().optional(),
   status: Status.default('PENDING'),
   priority: Priority.default('MEDIUM'),

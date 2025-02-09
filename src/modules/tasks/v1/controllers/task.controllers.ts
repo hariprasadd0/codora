@@ -9,14 +9,11 @@ import * as TaskServices from '../services/task.service';
  */
 export const createTaskController = asyncHandler(
   async (req: Request, res: Response) => {
-    const { task } = req.body;
-    if (!task) throw new ApiError(400, 'Tasks required');
-
     const id = req.params.projectId;
     const projectId = parseInt(id);
     if (isNaN(projectId)) throw new ApiError(400, 'Project ID not found');
 
-    const validatedTask = createTaskSchema.parse(task);
+    const validatedTask = createTaskSchema.parse(req.body);
 
     const tasks = await TaskServices.createTaskService(
       projectId,

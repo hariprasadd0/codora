@@ -8,6 +8,8 @@ import projectRoutes from './modules/project/v1/routes/project.route';
 import teamRoutes from './modules/teams/v1/routes/team.route';
 import taskRoutes from './modules/tasks/v1/routes/task.route';
 import logger from './core/utils/logger';
+import passport from 'passport';
+import './core/config/google';
 
 const app = express();
 
@@ -23,6 +25,7 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
+app.use(passport.initialize());
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());

@@ -57,6 +57,6 @@ router.get('/:id', verifyJwt, getUserById);
 router.patch('/me', verifyJwt, updateUser);
 router.post('/refresh', refreshToken);
 
-router.get('/', getAllUsers);
+router.get('/', verifyJwt, getAllUsers);
 
 export default router;

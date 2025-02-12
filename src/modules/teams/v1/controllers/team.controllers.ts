@@ -42,7 +42,8 @@ export const updateTeamController = asyncHandler(
   async (req: Request, res: Response) => {
     const { teamId } = req.params;
     const id = parseInt(teamId);
-    const { team } = req.body;
+    const team = req.body;
+
     const updatedTeam = await teamService.updateTeamService(id, team);
     res.status(200).json({
       data: updatedTeam,

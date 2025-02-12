@@ -34,7 +34,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   logger.info('User logged in', { email: user.email });
-  res.status(201).json({ message: 'Login Success', accessToken });
+  res.status(200).json({ message: 'Login Success', accessToken });
 });
 export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
   const user = req.body;

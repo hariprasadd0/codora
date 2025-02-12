@@ -36,6 +36,13 @@ export const TeamRepository = {
       where: {
         id: teamId,
       },
+      include: {
+        _count: {
+          select: {
+            members: true,
+          },
+        },
+      },
     });
   },
   deleteTeam: async (teamId: number) => {
@@ -66,6 +73,12 @@ export const TeamRepository = {
       });
       return newMember;
     });
+  },
+  isTeamLead: async (teamId: number, userId: number) => {
+    const teamMember = await prisma.teamMember.findFirst({
+      where: { teamId, userId, role: 'TEAM_LEAD' },
+    });
+    return !!teamMember;
   },
 
   getMember: async (teamId: number, userId: number) => {

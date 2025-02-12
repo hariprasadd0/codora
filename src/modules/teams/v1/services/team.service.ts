@@ -1,5 +1,5 @@
 import { TeamRepository } from '../repositories/team.repository';
-import { TeamCreateSchema } from '../schema/team.schema';
+import { TeamCreateSchema, TeamUpdateSchema } from '../schema/team.schema';
 import { ApiError } from '../../../../core/utils/ApiError';
 export const createTeamService = async (creatorId: number, team: any) => {
   const validated = TeamCreateSchema.parse(team);
@@ -10,8 +10,9 @@ export const getTeamService = async (teamId: number) => {
   const team = await TeamRepository.getTeamById(teamId);
   return team;
 };
-export const updateTeamService = async (teamId: number, team: any) => {
-  const updatedTeam = await TeamRepository.updateTeam(teamId, team);
+export const updateTeamService = async (teamId: number, team: unknown) => {
+  const validated = TeamUpdateSchema.parse(team);
+  const updatedTeam = await TeamRepository.updateTeam(teamId, validated);
   return updatedTeam;
 };
 export const deleteTeamService = async (teamId: number) => {
@@ -28,6 +29,10 @@ export const addMemberService = async (teamId: number, member: any) => {
 
 export const getTeamMembersService = async (teamId: number, userId: number) => {
   await TeamRepository.getMember(teamId, userId);
+};
+
+export const isUserTeamLead = async (teamId: number, userId: number) => {
+  return await TeamRepository.isTeamLead(teamId, userId);
 };
 
 export const removeTeamMemberService = async (

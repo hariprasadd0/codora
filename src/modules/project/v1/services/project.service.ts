@@ -3,6 +3,7 @@
  * @module services/project.service
  */
 
+import { ApiError } from '../../../../core/utils/ApiError';
 import * as projectRepository from '../repositories/project.repository';
 import {
   createProjectSchema,
@@ -15,12 +16,15 @@ export const createProjectService = async (project: unknown) => {
 };
 
 export const getProjectService = async (projectId: number) => {
+  if (!projectId) {
+    throw new ApiError(409, 'projectId not found');
+  }
   return await projectRepository.getProjectById(projectId);
 };
 
 export const listProjectService = async (userId: number) => {
   if (!userId) {
-    throw new Error('dd');
+    throw new ApiError(409, 'userId not found');
   }
   return await projectRepository.listProject(userId);
 };

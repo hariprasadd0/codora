@@ -2,6 +2,7 @@ import express, { urlencoded } from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { Request, Response, NextFunction } from 'express';
+import { ZodError } from 'zod';
 import { rateLimit } from 'express-rate-limit';
 import userRoutes from './modules/user/v1/routes/user.route';
 import projectRoutes from './modules/project/v1/routes/project.route';
@@ -31,6 +32,9 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof ZodError) {
+    res.status(400).json({ message: 'Validation failed', errors: err.errors });
+  }
   logger.error(err.message);
   res.status(500).send('Something went wrong');
 });

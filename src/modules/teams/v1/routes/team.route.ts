@@ -10,7 +10,10 @@ import {
 } from '../controllers/team.controllers';
 import { validateSchema } from '../../../../core/middlewares/validateSchema';
 import { TeamCreateSchema } from '../schema/team.schema';
-import { verifyJwt } from '../../../../core/middlewares/auth.middleware';
+import {
+  isTeamLead,
+  verifyJwt,
+} from '../../../../core/middlewares/auth.middleware';
 
 const router = Router();
 
@@ -21,13 +24,18 @@ router.post(
   validateSchema(TeamCreateSchema),
   createTeamController
 );
-router.get('/:teamId', getTeamController);
-router.patch('/:teamId', updateTeamController);
-router.delete('/:teamId', deleteTeamController);
+router.get('/:teamId', verifyJwt, getTeamController);
+router.patch('/:teamId', verifyJwt, isTeamLead, updateTeamController);
+router.delete('/:teamId', verifyJwt, isTeamLead, deleteTeamController);
 
 //team-member
-router.post('/:teamId/members', addTeamMemberController);
-router.get('/:teamId/members', getTeamMembersController);
-router.delete('/:teamId/members/:userId', removeTeamMemberController);
+router.post('/:teamId/members', verifyJwt, isTeamLead, addTeamMemberController);
+router.get('/:teamId/members', verifyJwt, getTeamMembersController);
+router.delete(
+  '/:teamId/members/:userId',
+  verifyJwt,
+  isTeamLead,
+  removeTeamMemberController
+);
 
 export default router;

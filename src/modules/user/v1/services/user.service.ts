@@ -10,7 +10,7 @@ import { userRepository } from '../repositories/user.repository';
 import * as bcrypt from 'bcrypt';
 import logger from '../../../../core/utils/logger';
 import User from '../types/user';
-import { createUserSchema } from '../schema/user.schema';
+import { createUserSchema, loginUserSchema } from '../schema/user.schema';
 
 export const createNewUser = async (user: unknown) => {
   const validated = createUserSchema.parse(user);
@@ -32,16 +32,17 @@ export const createNewUser = async (user: unknown) => {
   return { accessToken, refreshToken, newUser };
 };
 
-export const loginUserService = async (user: User) => {
-  const userFound = await userRepository.userByEmail(user.email);
+export const loginUserService = async (user: unknown) => {
+  const validated = loginUserSchema.parse(user);
+  const userFound = await userRepository.userByEmail(validated.email);
 
   if (!userFound) {
     throw new Error('User not found');
   }
 
   const isPasswordMatch = await bcrypt.compare(
-    user.password,
-    userFound.passwordHash
+    validated.password,
+    userFound.passwordHash!
   );
 
   if (!isPasswordMatch) {

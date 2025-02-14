@@ -10,9 +10,12 @@ import {
   updateProjectSchema,
 } from '../schema/project.schema';
 
-export const createProjectService = async (project: unknown) => {
+export const createProjectService = async (
+  project: unknown,
+  userId: number
+) => {
   const validated = createProjectSchema.parse(project);
-  await projectRepository.createProject(validated);
+  await projectRepository.createProject(validated, userId);
 };
 
 export const getProjectService = async (projectId: number) => {

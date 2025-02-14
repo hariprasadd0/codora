@@ -6,7 +6,11 @@ import logger from '../../../../core/utils/logger';
 export const createProjectController = asyncHandler(
   async (req: Request, res: Response) => {
     const projectData = req.body;
-    const project = await projectService.createProjectService(projectData);
+    const userId = (req as any).user.userId;
+    const project = await projectService.createProjectService(
+      projectData,
+      userId
+    );
     res.status(200).json({ message: 'Project created', project });
   }
 );
@@ -22,7 +26,9 @@ export const getProjectController = asyncHandler(
 export const listProjectController = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = (req as any).user.userId;
+
     const projects = await projectService.listProjectService(userId);
+
     res.status(200).json({ projects });
   }
 );

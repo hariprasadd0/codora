@@ -1,9 +1,13 @@
 import prisma from '../../../../core/config/prisma';
 import { CreateProjectDto, UpdateProjectDto } from '../schema/project.schema';
-export const createProject = async (project: CreateProjectDto) => {
+export const createProject = async (
+  project: CreateProjectDto,
+  userId: number
+) => {
   return await prisma.project.create({
     data: {
       ...project,
+      createdById: userId,
     },
   });
 };

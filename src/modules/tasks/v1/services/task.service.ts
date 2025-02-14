@@ -2,6 +2,7 @@ import { ApiError } from '../../../../core/utils/ApiError';
 import logger from '../../../../core/utils/logger';
 import { TaskRepository } from '../repositories/task.repository';
 import { createTaskDto, updateTaskDto } from '../schema/task.schema';
+import { getSocketInstance } from '../../../../core/utils/socket';
 
 /**
  * Create a new task within a project
@@ -42,6 +43,8 @@ export const createTaskService = async (
 
   // Create task
   const taskCreated = await TaskRepository.addTask(projectId, task);
+  const io = getSocketInstance();
+  io.to(`project-${projectId}`).emit('TaskCreated', taskCreated);
   logger.info(`Task created: ${taskCreated.id}`);
   return taskCreated;
 };
@@ -53,22 +56,13 @@ export const assignTaskService = async (
   taskId: number,
   assignedToId: number
 ) => {
-  // Validate task existence
-  const task = await TaskRepository.getTaskById(taskId);
-  if (!task) {
-    logger.error(`Task not found: ${taskId}`);
-    throw new ApiError(404, 'Task not found');
-  }
+  const updatedTask = await TaskRepository.assignTaskTransactional(
+    taskId,
+    assignedToId
+  );
 
-  // Validate user existence
-  const user = await TaskRepository.checkAssigned(assignedToId);
-  if (!user) {
-    logger.error(`User not found: ${assignedToId}`);
-    throw new ApiError(400, 'Assigned user not found');
-  }
-
-  // Assign the task
-  const updatedTask = await TaskRepository.assignTask(taskId, assignedToId);
+  const io = getSocketInstance();
+  io.to(`project-${updatedTask.projectId}`).emit('TaskAssigned', updatedTask);
   logger.info(`Task assigned: Task ${taskId} -> User ${assignedToId}`);
   return updatedTask;
 };

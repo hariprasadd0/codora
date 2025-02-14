@@ -104,16 +104,18 @@ export const deleteTaskController = asyncHandler(
 export const assignTaskController = asyncHandler(
   async (req: Request, res: Response) => {
     const { assignedToId } = req.body;
+
+    const assignee = parseInt(assignedToId);
+
+    if (isNaN(assignee)) throw new ApiError(400, 'assignedToId not found');
+
     if (!assignedToId) throw new ApiError(400, 'assignedToId not found');
 
     const id = req.params.taskId;
     const taskId = parseInt(id);
     if (isNaN(taskId)) throw new ApiError(400, 'Task ID not found');
 
-    const updatedTask = await TaskServices.assignTaskService(
-      taskId,
-      assignedToId
-    );
+    const updatedTask = await TaskServices.assignTaskService(taskId, assignee);
 
     res.status(200).json({
       data: updatedTask,

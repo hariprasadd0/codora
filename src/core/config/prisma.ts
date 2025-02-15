@@ -1,12 +1,19 @@
 import { PrismaClient } from '@prisma/client';
+import logger from '../utils/logger';
 
 const prisma = new PrismaClient({
-  log: ['query', 'info', 'warn', 'error'],
+  log: ['query'],
+  errorFormat: 'minimal',
 });
 
 process.on('SIGINT', async () => {
-  await prisma.$disconnect();
-  process.exit(0);
+  try {
+    await prisma.$disconnect();
+    process.exit(0);
+  } catch (error) {
+    logger.error(error);
+    process.exit(1);
+  }
 });
 
 export default prisma;

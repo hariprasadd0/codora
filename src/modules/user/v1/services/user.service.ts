@@ -5,12 +5,16 @@
 import {
   generateAccessToken,
   generateRefreshToken,
+  generateResetToken,
+  verifyResetToken,
 } from '../../../../core/utils/token';
 import { userRepository } from '../repositories/user.repository';
 import * as bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import logger from '../../../../core/utils/logger';
 import User from '../types/user';
 import { createUserSchema, loginUserSchema } from '../schema/user.schema';
+import { sendEmail } from '../../../../core/utils/email';
 
 export const createNewUser = async (user: unknown) => {
   const validated = createUserSchema.parse(user);
@@ -124,17 +128,26 @@ export const deleteUserService = async (userId: number) => {
   return deletedUser;
 };
 
-export const passwordResetService = async (email: string, password: string) => {
+export const requestPasswordReset = async (email: string) => {
   const userEmail = email.trim();
   const userFound = await userRepository.userByEmail(userEmail);
 
   if (!userFound) {
     throw new Error('User not found');
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  await userRepository.passwordReset(userFound.email, hashedPassword);
+  const resetToken = generateResetToken(userFound.id);
+  const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+  await sendEmail(
+    email,
+    'Password Reset Request',
+    `<p>Click <a href="${resetLink}">here</a> to reset your password. This link expires in 10 minutes.</p>`
+  );
+};
+export const resetPassword = async (token: string, newPassword: string) => {
+  const { userId } = verifyResetToken(token);
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  await userRepository.passwordReset(userId, hashedPassword);
+  return { success: true, message: 'Password reset successfully' };
 };
 
 export const setPreferenceService = async (

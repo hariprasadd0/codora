@@ -42,11 +42,20 @@ export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
   res.clearCookie('refreshToken');
   res.status(200).json({ message: 'Logout Success' });
 });
-export const passwordReset = asyncHandler(
+export const requestPasswordResetController = asyncHandler(
   //controller for password reset
   async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-    await userService.passwordResetService(email, password);
+    const { email } = req.body;
+    await userService.requestPasswordReset(email);
+    res
+      .status(200)
+      .json({ message: 'Password Reset Email sent to your Registered email' });
+  }
+);
+export const resetPasswordController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { token, newPassword } = req.body;
+    await userService.resetPassword(token, newPassword);
     res.status(200).json({ message: 'Password Reset Success' });
   }
 );

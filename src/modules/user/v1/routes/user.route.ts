@@ -8,6 +8,8 @@ import {
   logoutUser,
   getAllUsers,
   refreshToken,
+  requestPasswordResetController,
+  resetPasswordController,
 } from '../controllers/user.controller';
 import { validateSchema } from '../../../../core/middlewares/validateSchema';
 import { createUserSchema, loginUserSchema } from '../schema/user.schema';
@@ -56,6 +58,8 @@ router.post('/logout', logoutUser);
 router.get('/:id', verifyJwt, getUserById);
 router.patch('/me', verifyJwt, updateUser);
 router.post('/refresh', refreshToken);
+router.post('/request-reset', requestPasswordResetController);
+router.post('/reset-password', resetPasswordController);
 
 router.get('/', verifyJwt, getAllUsers);
 

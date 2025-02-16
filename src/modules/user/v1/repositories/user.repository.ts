@@ -78,10 +78,10 @@ export const userRepository = {
       },
     });
   },
-  passwordReset: async (email: string, password: string) => {
+  passwordReset: async (id: number, password: string) => {
     return await prisma.user.update({
       where: {
-        email: email,
+        id,
       },
       data: {
         passwordHash: password,

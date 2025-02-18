@@ -21,6 +21,11 @@ model User {
   teams       TeamMember[]
   tasks       Task[]    @relation("AssignedTasks")
   calendar    CalendarEvent[]
+  googleCalendarEnabled  Boolean     @default(false)
+  googleCalendarId       String?
+  googleAccessToken      String?
+  googleRefreshToken     String?
+
   createdTeams Team[]    @relation("TeamCreator")
   createdProjects Project[] @relation("ProjectCreator")
   payments    Payment[]  @relation("PaidByUser")
@@ -102,7 +107,10 @@ model CalendarEvent {
   task      Task?     @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId    Int?
   eventDate DateTime
+  eventType EventType @default(WORK_SESSION)
   createdAt DateTime  @default(now())
+
+ @@unique([userId, taskId, eventDate])
 }
 
 enum Preference {
@@ -127,4 +135,10 @@ enum Priority {
   LOW
   MEDIUM
   HIGH
+}
+
+enum EventType{
+  WORK_SESSION
+  REMINDER
+  DEADLINE
 }

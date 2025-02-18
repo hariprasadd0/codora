@@ -108,4 +108,13 @@ export const userRepository = {
       },
     });
   },
+  calendarStatus: async (userId: number) => {
+    const Calstatus = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        googleCalendarId: true,
+      },
+    });
+    return !!Calstatus?.googleCalendarId;
+  },
 };

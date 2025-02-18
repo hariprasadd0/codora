@@ -168,3 +168,9 @@ export const setPreferenceService = async (
   );
   return changedPreference;
 };
+
+export const calendarStatusService = async (userId: number) => {
+  if (!userId || isNaN(userId)) throw new Error('Invalid user Id');
+
+  return await userRepository.calendarStatus(userId);
+};

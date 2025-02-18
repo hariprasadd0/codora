@@ -10,6 +10,7 @@ import {
   refreshToken,
   requestPasswordResetController,
   resetPasswordController,
+  calendarStatusController,
 } from '../controllers/user.controller';
 import { validateSchema } from '../../../../core/middlewares/validateSchema';
 import { createUserSchema, loginUserSchema } from '../schema/user.schema';
@@ -55,12 +56,13 @@ router.get(
 router.post('/register', validateSchema(createUserSchema), createUser);
 router.post('/login', validateSchema(loginUserSchema), loginUser);
 router.post('/logout', logoutUser);
-router.get('/:id', verifyJwt, getUserById);
-router.patch('/me', verifyJwt, updateUser);
 router.post('/refresh', refreshToken);
 router.post('/request-reset', requestPasswordResetController);
 router.post('/reset-password', resetPasswordController);
 
+router.get('/calendar-status', verifyJwt, calendarStatusController);
+router.patch('/me', verifyJwt, updateUser);
 router.get('/', verifyJwt, getAllUsers);
+router.get('/:id', verifyJwt, getUserById);
 
 export default router;

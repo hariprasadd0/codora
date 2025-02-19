@@ -3,7 +3,8 @@ import jwt from 'jsonwebtoken';
 import * as userService from '../services/user.service';
 import asyncHandler from '../../../../core/utils/asyncHandler';
 import logger from '../../../../core/utils/logger';
-
+import { getOAuthClient } from '../../../../core/utils/calendar';
+import { google } from 'googleapis';
 export const createUser = asyncHandler(async (req: Request, res: Response) => {
   const user = req.body;
   try {
@@ -148,5 +149,86 @@ export const setPreference = asyncHandler(
         timestamp: new Date().toISOString(),
       },
     });
+  }
+);
+
+export const calendarStatusController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = (req as any).user.userId;
+    if (!userId || isNaN(userId)) throw new Error('Invalid user Id');
+
+    const status = await userService.calendarStatusService(userId);
+    res.status(200).json({
+      data: status,
+      meta: {
+        version: '1.0',
+        timestamp: new Date().toISOString(),
+      },
+    });
+  }
+);
+
+export const calendarEnableController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = (req as any).user.userId;
+    if (!userId || isNaN(userId)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+
+    const oauthClient = getOAuthClient();
+    const authUrl = oauthClient.generateAuthUrl({
+      access_type: 'offline',
+      scope: ['https://www.googleapis.com/auth/calendar'],
+      prompt: 'consent',
+      state: userId.toString(),
+    });
+    res.status(200).json({ authUrl });
+  }
+);
+
+export const calendarCallbackController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { code, state } = req.query;
+
+    const userId = parseInt(state as string);
+    if (!userId || isNaN(userId)) throw new Error('userid mismatch');
+
+    if (!code || isNaN(userId)) {
+      return res.status(400).json({ error: 'Invalid request' });
+    }
+    try {
+      const oauthClient = getOAuthClient();
+      const { tokens } = await oauthClient.getToken(code as string);
+
+      if (!tokens.access_token || !tokens.refresh_token) {
+        throw new Error('Failed to retrieve tokens');
+      }
+
+      oauthClient.setCredentials(tokens);
+
+      const calendar = google.calendar({ version: 'v3', auth: oauthClient });
+      const { data } = await calendar.calendars.get({ calendarId: 'primary' });
+      if (!data.id) throw new Error('No google id');
+      await userService.callbackCalendarService(userId, data, tokens);
+      res.redirect(`${process.env.FRONTEND_URL}/calendar/success`);
+    } catch (error) {
+      logger.error('Calendar enable error:', error);
+      res.redirect(`${process.env.FRONTEND_URL}/calendar/error`);
+    }
+  }
+);
+export const calendarDisableController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = (req as any).user.userId;
+    if (isNaN(userId)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+    await userService.disableCalendarService(userId, {
+      googleCalendarEnabled: false,
+      googleAccessToken: null,
+      googleRefreshToken: null,
+      googleCalendarId: null,
+    });
+    res.status(200).json({ message: 'Google Calendar disabled' });
   }
 );

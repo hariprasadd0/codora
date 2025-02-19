@@ -11,6 +11,9 @@ import {
   requestPasswordResetController,
   resetPasswordController,
   calendarStatusController,
+  calendarEnableController,
+  calendarCallbackController,
+  calendarDisableController,
 } from '../controllers/user.controller';
 import { validateSchema } from '../../../../core/middlewares/validateSchema';
 import { createUserSchema, loginUserSchema } from '../schema/user.schema';
@@ -21,7 +24,7 @@ const router = express.Router();
 //google
 router.get('/google', (req, res, next) => {
   passport.authenticate('google', {
-    scope: ['profile', 'email'],
+    scope: ['profile', 'email', 'https://www.googleapis.com/auth/calendar'],
     session: false,
     failureRedirect: '/login',
     failureFlash: true,
@@ -59,7 +62,9 @@ router.post('/logout', logoutUser);
 router.post('/refresh', refreshToken);
 router.post('/request-reset', requestPasswordResetController);
 router.post('/reset-password', resetPasswordController);
-
+router.post('/calendar/enable', verifyJwt, calendarEnableController);
+router.post('/calendar/disable', verifyJwt, calendarDisableController);
+router.get('/google/calendar/redirect', calendarCallbackController);
 router.get('/calendar-status', verifyJwt, calendarStatusController);
 router.patch('/me', verifyJwt, updateUser);
 router.get('/', verifyJwt, getAllUsers);

@@ -174,3 +174,27 @@ export const calendarStatusService = async (userId: number) => {
 
   return await userRepository.calendarStatus(userId);
 };
+
+export const callbackCalendarService = async (
+  userId: number,
+  data: any,
+  tokens: any
+) => {
+  return await userRepository.enableCalendar(userId, data, tokens);
+};
+
+export const disableCalendarService = async (
+  userId: number,
+  user: {
+    googleCalendarEnabled?: boolean;
+    googleAccessToken?: string | null;
+    googleRefreshToken?: string | null;
+    googleCalendarId?: string | null;
+  }
+) => {
+  try {
+    await userRepository.disableCalendar(userId, user);
+  } catch (error) {
+    logger.error('error in disabling calendar', error);
+  }
+};

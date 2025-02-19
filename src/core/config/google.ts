@@ -12,9 +12,13 @@ import logger from '../utils/logger';
 
 const googleClientId: string = process.env.GOOGLE_CLIENT_ID!;
 const googleClientSecret: string = process.env.GOOGLE_CLIENT_SECRET!;
+const callback: string = process.env.GOOGLE_REDIRECT_URI!;
 
 if (!googleClientId || !googleClientSecret) {
   throw new Error('clientID not found');
+}
+if (!callback) {
+  throw new Error('callback not found');
 }
 
 export const googleClient = new OAuth2Client({
@@ -23,11 +27,12 @@ export const googleClient = new OAuth2Client({
 });
 
 passport.use(
+  'google',
   new GoogleStrategy(
     {
       clientID: googleClientId,
       clientSecret: googleClientSecret,
-      callbackURL: 'http://localhost:3000/v1/users/google/redirect',
+      callbackURL: callback,
       scope: ['profile', 'email'],
       passReqToCallback: true,
     },
@@ -67,6 +72,7 @@ passport.use(
           where: { id: user.id },
           data: { refreshToken: newRefreshToken },
         });
+
         return done(null, { user, accessToken, refreshToken: newRefreshToken });
       } catch (error) {
         logger.error('Google strategy error:', error);

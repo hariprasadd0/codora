@@ -117,4 +117,23 @@ export const userRepository = {
     });
     return !!Calstatus?.googleCalendarId;
   },
+  enableCalendar: async (userId: number, data: any, tokens: any) => {
+    return await prisma.user.update({
+      where: { id: userId },
+      data: {
+        googleCalendarEnabled: true,
+        googleCalendarId: data.id,
+        googleAccessToken: tokens.access_token,
+        googleRefreshToken: tokens.refresh_token,
+      },
+    });
+  },
+  disableCalendar: async (userId: number, data: any) => {
+    return await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...data,
+      },
+    });
+  },
 };

@@ -40,11 +40,6 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).send('Something went wrong');
 });
 
-//URLS
-// app.get('/health', (req, res) => {
-//   res.status(200).send('OK');
-// });
-
 app.use('/v1/users', userRoutes);
 app.use('/v1/projects', projectRoutes);
 app.use('/v1/teams', teamRoutes);

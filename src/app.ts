@@ -8,6 +8,7 @@ import userRoutes from './modules/user/v1/routes/user.route';
 import projectRoutes from './modules/project/v1/routes/project.route';
 import teamRoutes from './modules/teams/v1/routes/team.route';
 import taskRoutes from './modules/tasks/v1/routes/task.route';
+import calendarRoutes from './modules/calendar/v1/routes/calendar.route';
 import logger from './core/utils/logger';
 import passport from 'passport';
 import './core/config/google';
@@ -48,5 +49,6 @@ app.use('/v1/users', userRoutes);
 app.use('/v1/projects', projectRoutes);
 app.use('/v1/teams', teamRoutes);
 app.use('/v1/tasks', taskRoutes);
+app.use('/v1/calendar', calendarRoutes);
 
 export default app;

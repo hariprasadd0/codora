@@ -5,6 +5,7 @@ import {
   listProjectController,
   updateProjectController,
   deleteProjectController,
+  convertToTeamController,
 } from '../controllers/project.controller';
 import { verifyJwt } from '../../../../core/middlewares/auth.middleware';
 import { validateSchema } from '../../../../core/middlewares/validateSchema';
@@ -23,7 +24,6 @@ router.get('/', verifyJwt, listProjectController);
 router.patch('/:projectId', verifyJwt, updateProjectController);
 router.delete('/:projectId', verifyJwt, deleteProjectController);
 
-router.post(':projectId/convert-to-team');
-router.post(':projectId/team');
+router.post('/:projectId/team', verifyJwt, convertToTeamController);
 
 export default router;

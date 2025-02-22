@@ -4,6 +4,7 @@
  */
 
 import { ApiError } from '../../../../core/utils/ApiError';
+import { TeamCreateDto } from '../../../teams/v1/schema/team.schema';
 import * as projectRepository from '../repositories/project.repository';
 import {
   createProjectSchema,
@@ -49,4 +50,22 @@ export const addCollaboratorService = async (
   memberId: number
 ) => {
   return await projectRepository.addMemberToProject(projectId, memberId);
+};
+
+export const convertToTeamService = async (
+  projectId: number,
+  teamId: number
+) => {
+  if (isNaN(teamId)) {
+    throw new ApiError(409, 'Team ID not found');
+  }
+  return await projectRepository.convertToTeam(projectId, teamId);
+};
+
+export const createTeamService = async (
+  projectId: number,
+  userId: number,
+  team: TeamCreateDto
+) => {
+  return await projectRepository.createTeam(projectId, userId, team);
 };

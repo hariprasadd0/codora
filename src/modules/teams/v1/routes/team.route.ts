@@ -29,7 +29,7 @@ router.patch('/:teamId', verifyJwt, isTeamLead, updateTeamController);
 router.delete('/:teamId', verifyJwt, isTeamLead, deleteTeamController);
 
 //team-member
-router.post('/:teamId/members', verifyJwt, isTeamLead, addTeamMemberController);
+router.post('/members', verifyJwt, isTeamLead, addTeamMemberController);
 router.get('/:teamId/members', verifyJwt, getTeamMembersController);
 router.delete(
   '/:teamId/members/:userId',

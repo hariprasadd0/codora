@@ -4,6 +4,7 @@ import cors from 'cors';
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { rateLimit } from 'express-rate-limit';
+import session from 'express-session';
 import userRoutes from './modules/user/v1/routes/user.route';
 import projectRoutes from './modules/project/v1/routes/project.route';
 import teamRoutes from './modules/teams/v1/routes/team.route';
@@ -12,6 +13,9 @@ import calendarRoutes from './modules/calendar/v1/routes/calendar.route';
 import logger from './core/utils/logger';
 import passport from 'passport';
 import './core/config/google';
+
+//test
+import './modules/tasks/v1/events/taskSyncListener';
 
 const app = express();
 
@@ -26,6 +30,13 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
+app.use(
+  session({
+    secret: process.env.JWT_SECRET!,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 app.use(limiter);
 app.use(passport.initialize());
 app.use(cors(corsOptions));

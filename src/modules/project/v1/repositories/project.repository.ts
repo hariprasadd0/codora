@@ -1,4 +1,6 @@
 import prisma from '../../../../core/config/prisma';
+import { TeamRepository } from '../../../teams/v1/repositories/team.repository';
+import { TeamCreateDto } from '../../../teams/v1/schema/team.schema';
 import { CreateProjectDto, UpdateProjectDto } from '../schema/project.schema';
 export const createProject = async (
   project: CreateProjectDto,
@@ -14,6 +16,7 @@ export const createProject = async (
 export const listProject = async (userId: number) => {
   return await prisma.project.findMany({
     where: { createdById: userId },
+    orderBy: { createdAt: 'asc' },
   });
 };
 export const getProjectById = async (projectId: number) => {
@@ -76,5 +79,38 @@ export const addMemberToProject = async (
       data: { teamId, userId: memberId },
     });
     return { message: 'User added to project' };
+  });
+};
+
+export const convertToTeam = async (projectId: number, teamId: number) => {
+  return await prisma.$transaction(async (tx) => {
+    const project = await tx.project.findUnique({
+      where: { id: projectId },
+    });
+    if (!project) throw new Error('Project not found');
+    await tx.project.update({
+      where: { id: projectId },
+      data: { teamId },
+    });
+    return { message: 'Project converted to team' };
+  });
+};
+
+export const createTeam = async (
+  projectId: number,
+  userId: number,
+  team: TeamCreateDto
+) => {
+  return await prisma.$transaction(async (tx) => {
+    const project = await tx.project.findUnique({
+      where: { id: projectId },
+    });
+    if (!project) throw new Error('Project not found');
+    const newTeam = await TeamRepository.create(userId, team);
+    await tx.project.update({
+      where: { id: projectId },
+      data: { teamId: newTeam.id },
+    });
+    return { message: 'Team created' };
   });
 };

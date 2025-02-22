@@ -2,6 +2,7 @@ import asyncHandler from '../../../../core/utils/asyncHandler';
 import { Request, Response } from 'express';
 import * as projectService from '../services/project.service';
 import logger from '../../../../core/utils/logger';
+import { ApiError } from '../../../../core/utils/ApiError';
 
 export const createProjectController = asyncHandler(
   async (req: Request, res: Response) => {
@@ -55,7 +56,25 @@ export const deleteProjectController = asyncHandler(
 
 export const convertToTeamController = asyncHandler(
   async (req: Request, res: Response) => {
-    logger.info('Convert to team');
+    const userId = (req as any).user.userId;
+    const projectId = parseInt(req.params.projectId);
+    const teamId = parseInt(req.body.teamId);
+    const team = req.body;
+
+    if (!teamId && !team) {
+      logger.error('Team ID or Team data not found');
+      throw new ApiError(400, 'Team ID or Team data not found');
+    }
+    const project = await projectService.getProjectService(projectId);
+    if (project?.teamId !== null) {
+      throw new ApiError(400, 'Project already have a team');
+    }
+    if (teamId) {
+      await projectService.convertToTeamService(projectId, teamId);
+    } else {
+      await projectService.createTeamService(projectId, userId, team);
+    }
+
     res.status(200).json({ message: 'Convert to team' });
   }
 );

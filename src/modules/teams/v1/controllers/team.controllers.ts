@@ -68,8 +68,10 @@ export const deleteTeamController = asyncHandler(
 );
 export const addTeamMemberController = asyncHandler(
   async (req: Request, res: Response) => {
-    const { teamMember, teamId } = req.body;
-    const member = await teamService.addMemberService(teamId, teamMember);
+    const { teamId } = req.params;
+    const id = parseInt(teamId);
+    const { email } = req.body;
+    const member = await teamService.addMemberService(id, email);
     res.status(200).json({
       data: member,
       meta: {
@@ -83,6 +85,7 @@ export const addTeamMemberController = asyncHandler(
 export const removeTeamMemberController = asyncHandler(
   async (req: Request, res: Response) => {
     const { teamId, userId } = req.params;
+
     const teamIdInt = parseInt(teamId);
     const id = parseInt(userId);
     await teamService.removeTeamMemberService(teamIdInt, id);
@@ -112,5 +115,20 @@ export const getTeamMembersController = asyncHandler(
         timestamp: new Date().toISOString(),
       },
     });
+  }
+);
+
+export const inviteController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { token } = req.params;
+    if (!token || typeof token !== 'string') {
+      return res.status(400).send('Invalid invitation link');
+    }
+    const invitation = await teamService.getInvitationService(token);
+    if (!invitation || invitation.expiresAt < new Date()) {
+      return res.status(400).send('Invalid or expired invitation');
+    }
+    (req.session as any).invitationToken = token;
+    res.redirect(`/login?inviteToken=${token}`);
   }
 );

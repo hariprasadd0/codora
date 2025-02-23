@@ -58,7 +58,7 @@ export const loginUserService = async (user: unknown) => {
 
   await userRepository.updateRefreshToken(userFound.id, refreshToken);
 
-  return { accessToken, refreshToken };
+  return { accessToken, refreshToken, userFound };
 };
 export const refreshTokenService = async (userId: number, token: string) => {
   const storedToken = await userRepository.getRefreshToken(userId);
@@ -197,4 +197,16 @@ export const disableCalendarService = async (
   } catch (error) {
     logger.error('error in disabling calendar', error);
   }
+};
+
+export const getInvitationByToken = async (token: string) => {
+  return await userRepository.getInvitation(token);
+};
+
+export const deleteInviteService = async (inviteId: number) => {
+  return await userRepository.deleteInvite(inviteId);
+};
+
+export const addTeamMemberService = async (teamId: number, userId: number) => {
+  return await userRepository.addTeamMember(teamId, userId);
 };

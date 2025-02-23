@@ -7,6 +7,7 @@ import {
   addTeamMemberController,
   removeTeamMemberController,
   getTeamMembersController,
+  inviteController,
 } from '../controllers/team.controllers';
 import { validateSchema } from '../../../../core/middlewares/validateSchema';
 import { TeamCreateSchema } from '../schema/team.schema';
@@ -29,7 +30,7 @@ router.patch('/:teamId', verifyJwt, isTeamLead, updateTeamController);
 router.delete('/:teamId', verifyJwt, isTeamLead, deleteTeamController);
 
 //team-member
-router.post('/members', verifyJwt, isTeamLead, addTeamMemberController);
+router.post('/:teamId/members', verifyJwt, isTeamLead, addTeamMemberController);
 router.get('/:teamId/members', verifyJwt, getTeamMembersController);
 router.delete(
   '/:teamId/members/:userId',
@@ -37,5 +38,6 @@ router.delete(
   isTeamLead,
   removeTeamMemberController
 );
+router.get('/invite/:token', inviteController);
 
 export default router;

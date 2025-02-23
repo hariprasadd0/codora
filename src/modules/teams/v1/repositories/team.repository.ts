@@ -45,6 +45,13 @@ export const TeamRepository = {
       },
     });
   },
+  getMemberByEmail: async (email: string) => {
+    return await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+  },
   deleteTeam: async (teamId: number) => {
     return await prisma.$transaction(async (tx) => {
       await tx.teamMember.deleteMany({ where: { teamId } });
@@ -74,9 +81,9 @@ export const TeamRepository = {
       return newMember;
     });
   },
-  isTeamLead: async (teamId: number, userId: number) => {
+  isTeamLead: async (userId: number, teamId: number) => {
     const teamMember = await prisma.teamMember.findFirst({
-      where: { teamId, userId, role: 'TEAM_LEAD' },
+      where: { userId, teamId, role: 'TEAM_LEAD' },
     });
     return !!teamMember;
   },
@@ -96,6 +103,28 @@ export const TeamRepository = {
           teamId,
           userId,
         },
+      },
+    });
+  },
+  getInvitation: async (token: string) => {
+    return await prisma.invitation.findUnique({
+      where: {
+        token,
+      },
+    });
+  },
+  createInvite: async (
+    teamId: number,
+    email: string,
+    token: string,
+    expiresAt: Date
+  ) => {
+    return await prisma.invitation.create({
+      data: {
+        teamId,
+        email,
+        token,
+        expiresAt,
       },
     });
   },

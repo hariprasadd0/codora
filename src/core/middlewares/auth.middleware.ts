@@ -45,21 +45,22 @@ export const isTeamLead = async (
 
     if (!teamId) {
       res.status(400).json({ error: 'Team ID is required' });
+      return;
     }
 
     // Check if the user is a team lead
     const isLead = await isUserTeamLead(user.userId, Number(teamId));
 
-    console.log(isLead);
-
     if (!isLead) {
       res.status(403).json({
         error: 'Access denied. Only Team Leads can perform this action.',
       });
+      return;
     }
 
     next();
   } catch (error) {
     res.status(500).json({ error: 'Internal server error.' });
+    return;
   }
 };

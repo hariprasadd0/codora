@@ -5,12 +5,26 @@ import asyncHandler from '../../../../core/utils/asyncHandler';
 import logger from '../../../../core/utils/logger';
 import { getOAuthClient } from '../../../../core/utils/calendar';
 import { google } from 'googleapis';
+
 export const createUser = asyncHandler(async (req: Request, res: Response) => {
   const user = req.body;
   try {
     const { newUser, accessToken, refreshToken } =
       await userService.createNewUser(user);
+    const tk = (req.session as any).invitationToken || req.query.inviteToken;
+    const token = tk ? tk.toString() : null;
 
+    if (token && newUser) {
+      const invitation = await userService.getInvitationByToken(token);
+      if (invitation && invitation.email === user.email) {
+        await userService.addTeamMemberService(invitation.teamId, newUser?.id);
+        await userService.deleteInviteService(invitation.id);
+        delete (req.session as any).invitationToken; // Clear session
+      } else {
+        res.status(400).send('Email mismatch or invalid invitation');
+        return;
+      }
+    }
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -26,9 +40,21 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
 export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const user = req.body;
 
-  const { accessToken, refreshToken } =
+  const { accessToken, refreshToken, userFound } =
     await userService.loginUserService(user);
+  const tk = (req.session as any).invitationToken || req.query.inviteToken;
+  const token = tk ? tk.toString() : null;
 
+  if (token && userFound) {
+    const invitation = await userService.getInvitationByToken(token);
+    if (invitation && invitation.email === user.email) {
+      await userService.addTeamMemberService(invitation.teamId, userFound.id);
+      await userService.deleteInviteService(invitation.id);
+      delete (req.session as any).invitationToken; // Clear session
+    } else {
+      res.status(400).send('Email mismatch or invalid invitation');
+    }
+  }
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',

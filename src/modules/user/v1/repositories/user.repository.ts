@@ -136,4 +136,27 @@ export const userRepository = {
       },
     });
   },
+  getInvitation: async (token: string) => {
+    return await prisma.invitation.findUnique({
+      where: {
+        token: token,
+      },
+    });
+  },
+  deleteInvite: async (inviteId: number) => {
+    return await prisma.invitation.delete({
+      where: {
+        id: inviteId,
+      },
+    });
+  },
+  addTeamMember: async (teamId: number, userId: number) => {
+    return await prisma.teamMember.create({
+      data: {
+        teamId: teamId,
+        userId: userId,
+        role: 'MEMBER',
+      },
+    });
+  },
 };

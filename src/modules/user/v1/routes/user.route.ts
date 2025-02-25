@@ -58,7 +58,7 @@ router.get(
 
 router.post('/register', validateSchema(createUserSchema), createUser);
 router.post('/login', validateSchema(loginUserSchema), loginUser);
-router.post('/logout', logoutUser);
+router.post('/logout', verifyJwt, logoutUser);
 router.post('/refresh', refreshToken);
 router.post('/request-reset', requestPasswordResetController);
 router.post('/reset-password', resetPasswordController);

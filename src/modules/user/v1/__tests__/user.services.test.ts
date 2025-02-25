@@ -92,6 +92,11 @@ describe('userService', () => {
     expect(result).toEqual({
       accessToken: 'mockAccessToken',
       refreshToken: 'mockRefreshToken',
+      userFound: {
+        email: 'test@example.com',
+        id: 1,
+        passwordHash: 'hashedPassword123',
+      },
     });
   });
   test('refreshTokenService should return new accessToken', async () => {

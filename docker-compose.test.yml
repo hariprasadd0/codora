@@ -1,0 +1,10 @@
+version: '3.9' # This refers to the Docker Compose file version
+services:
+  db:
+    image: postgres:15 # Specify the PostgreSQL version
+    environment:
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: codora_test
+    ports:
+      - '5433:5432'

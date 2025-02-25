@@ -67,7 +67,7 @@ export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
   const user = req.body;
   await userService.logoutUserService(user);
   res.clearCookie('refreshToken');
-  res.status(200).json({ message: 'Logout Success' });
+  return res.status(200).json({ message: 'Logout Success' });
 });
 export const requestPasswordResetController = asyncHandler(
   //controller for password reset
@@ -106,7 +106,7 @@ export const refreshToken = asyncHandler(
       userId,
       token
     );
-    res.status(201).json({ accessToken });
+    return res.status(201).json({ accessToken });
   }
 );
 

@@ -16,7 +16,7 @@ export const createProjectService = async (
   userId: number
 ) => {
   const validated = createProjectSchema.parse(project);
-  await projectRepository.createProject(validated, userId);
+  return await projectRepository.createProject(validated, userId);
 };
 
 export const getProjectService = async (projectId: number) => {

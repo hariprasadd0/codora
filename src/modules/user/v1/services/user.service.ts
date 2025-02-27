@@ -15,6 +15,7 @@ import logger from '../../../../core/utils/logger';
 import User from '../types/user';
 import { createUserSchema, loginUserSchema } from '../schema/user.schema';
 import { sendEmail } from '../../../../core/utils/email';
+import { ApiError } from '../../../../core/utils/ApiError';
 
 export const createNewUser = async (user: unknown) => {
   const validated = createUserSchema.parse(user);
@@ -41,7 +42,7 @@ export const loginUserService = async (user: unknown) => {
   const userFound = await userRepository.userByEmail(validated.email);
 
   if (!userFound) {
-    throw new Error('User not found');
+    throw new ApiError(401, 'user not found');
   }
 
   const isPasswordMatch = await bcrypt.compare(
@@ -50,7 +51,7 @@ export const loginUserService = async (user: unknown) => {
   );
 
   if (!isPasswordMatch) {
-    throw new Error('Invalid password');
+    throw new ApiError(401, 'user not found');
   }
 
   const accessToken = generateAccessToken(userFound.id);
@@ -63,9 +64,9 @@ export const loginUserService = async (user: unknown) => {
 export const refreshTokenService = async (userId: number, token: string) => {
   const storedToken = await userRepository.getRefreshToken(userId);
   if (!storedToken || !storedToken.refreshToken)
-    throw new Error('No user Found');
+    throw new ApiError(401, 'No user Found');
   if (storedToken.refreshToken !== token) {
-    throw new Error('Refresh token mismatch');
+    throw new ApiError(401, 'Refresh token mismatch');
   }
   const accessToken = generateAccessToken(userId);
 
@@ -75,7 +76,7 @@ export const logoutUserService = async (user: User) => {
   const userFound = await userRepository.userByEmail(user.email);
 
   if (!userFound) {
-    throw new Error('User not found');
+    throw new ApiError(401, 'user not found');
   }
 
   await userRepository.logoutUser(userFound.email);

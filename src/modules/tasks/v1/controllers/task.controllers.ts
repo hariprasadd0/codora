@@ -123,3 +123,15 @@ export const assignTaskController = asyncHandler(
     });
   }
 );
+
+export const syncTaskToCalendarController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const id = req.params.taskId;
+    const taskId = parseInt(id);
+    if (isNaN(taskId)) throw new ApiError(400, 'Task ID not found');
+
+    await TaskServices.syncTaskToCalendarService(taskId);
+
+    res.status(200).json({ message: 'Task synced to calendar' });
+  }
+);

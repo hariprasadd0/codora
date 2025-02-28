@@ -9,6 +9,7 @@ import {
   deleteTaskController,
   assignTaskController,
   updateTaskController,
+  syncTaskToCalendarController,
 } from '../controllers/task.controllers';
 
 const router = Router();
@@ -25,7 +26,7 @@ router.post(
 router.get('/:taskId', verifyJwt, getTaskByIdController);
 
 //get all tasks for a project
-router.get('/:projectId', verifyJwt, getAllTasksController);
+router.get('/project/:projectId', verifyJwt, getAllTasksController);
 
 //assign task to a user
 router.patch('/:taskId/assign', assignTaskController);
@@ -44,5 +45,8 @@ router.put('/:taskId', verifyJwt, updateTaskController);
 
 //delete task
 router.delete('/:taskId', verifyJwt, deleteTaskController);
+
+//sync task to calendar
+router.post('/:taskId/sync', verifyJwt, syncTaskToCalendarController);
 
 export default router;

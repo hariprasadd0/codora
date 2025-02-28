@@ -45,6 +45,7 @@ export const createTaskService = async (
   const taskCreated = await TaskRepository.addTask(projectId, task);
   const io = getSocketInstance();
   io.to(`project-${projectId}`).emit('TaskCreated', taskCreated);
+
   logger.info(`Task created: ${taskCreated.id}`);
   return taskCreated;
 };
@@ -126,4 +127,26 @@ export const deleteTaskService = async (taskId: number) => {
   await TaskRepository.deleteTask(taskId);
   logger.info(`Task deleted: ${taskId}`);
   return { message: 'Task deleted successfully' };
+};
+
+export const syncTaskToCalendarService = async (taskId: number) => {
+  const task = await TaskRepository.getTaskById(taskId);
+  if (!task) {
+    logger.error(`Task not found: ${taskId}`);
+    throw new ApiError(404, 'Task not found');
+  }
+  const userId = task.assignedToId;
+  if (!userId) {
+    throw new ApiError(400, 'Task not assigned');
+  }
+  const user = await TaskRepository.getUser(userId);
+  if (!user?.googleAccessToken || !user.googleRefreshToken) {
+    throw new ApiError(400, 'Google Calendar not connected');
+  }
+
+  const result = await syncTaskToCalendar(task.id, {
+    accessToken: user.googleAccessToken,
+    refreshToken: user.googleRefreshToken,
+  });
+  return result;
 };

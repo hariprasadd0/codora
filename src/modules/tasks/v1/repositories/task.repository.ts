@@ -5,12 +5,13 @@ import logger from '../../../../core/utils/logger';
 
 export const TaskRepository = {
   addTask: async (projectId: number, tasks: createTaskDto) => {
-    return await prisma.task.create({
+    const task = await prisma.task.create({
       data: {
         projectId,
         ...tasks,
       },
     });
+    return task;
   },
   getProject: async (projectId: number) => {
     return prisma.project.findUnique({
@@ -59,6 +60,7 @@ export const TaskRepository = {
       },
     });
   },
+
   deleteTask: async (taskId: number) => {
     return await prisma.task.delete({
       where: { id: taskId },
@@ -112,6 +114,16 @@ export const TaskRepository = {
         where: { id: taskId },
         data: { assignedToId },
       });
+    });
+  },
+  //for testing
+  getUser: async (userId: number) => {
+    return await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        googleAccessToken: true,
+        googleRefreshToken: true,
+      },
     });
   },
 };

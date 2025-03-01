@@ -3,7 +3,8 @@ import logger from '../../../../core/utils/logger';
 import { TaskRepository } from '../repositories/task.repository';
 import { createTaskDto, updateTaskDto } from '../schema/task.schema';
 import { getSocketInstance } from '../../../../core/utils/socket';
-
+import { syncTaskToCalendar } from '../../../../core/utils/calendarSync';
+import { Priority, Status } from '@prisma/client';
 /**
  * Create a new task within a project
  */
@@ -149,4 +150,43 @@ export const syncTaskToCalendarService = async (taskId: number) => {
     refreshToken: user.googleRefreshToken,
   });
   return result;
+};
+
+/**
+ * Update task status
+ */
+export const updateTaskStatusService = async (
+  taskId: number,
+  status: Status
+) => {
+  const task = await TaskRepository.getTaskById(taskId);
+
+  if (!task) {
+    logger.error(`Task not found: ${taskId}`);
+    throw new ApiError(404, 'Task not found');
+  }
+  const validStatus = ['PENDING', 'IN_PROGRESS', 'COMPLETED', 'DELAYED'];
+  if (!validStatus.includes(status)) {
+    logger.error(`Invalid status: ${status}`);
+    throw new ApiError(400, 'Invalid status');
+  }
+  const updatedTask = await TaskRepository.updateTask(taskId, { status });
+  return updatedTask;
+};
+
+/**
+ * Update task priority
+ */
+export const updateTaskPriorityService = async (
+  taskId: number,
+  priority: Priority
+) => {
+  const task = await TaskRepository.getTaskById(taskId);
+
+  if (!task) {
+    logger.error(`Task not found: ${taskId}`);
+    throw new ApiError(404, 'Task not found');
+  }
+  const updatedTask = await TaskRepository.updateTask(taskId, { priority });
+  return updatedTask;
 };

@@ -135,3 +135,47 @@ export const syncTaskToCalendarController = asyncHandler(
     res.status(200).json({ message: 'Task synced to calendar' });
   }
 );
+
+export const updateTaskStatusController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const id = req.params.taskId;
+    const taskId = parseInt(id);
+    if (isNaN(taskId)) throw new ApiError(400, 'Task ID not found');
+
+    const { status } = req.body;
+
+    if (!status) throw new ApiError(400, 'Status not found');
+
+    const updatedTask = await TaskServices.updateTaskStatusService(
+      taskId,
+      status
+    );
+
+    res.status(200).json({
+      data: updatedTask,
+      message: 'Task status updated successfully',
+    });
+  }
+);
+
+export const updateTaskPriorityController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const id = req.params.taskId;
+    const taskId = parseInt(id);
+    if (isNaN(taskId)) throw new ApiError(400, 'Task ID not found');
+
+    const { priority } = req.body;
+
+    if (!priority) throw new ApiError(400, 'Priority not found');
+
+    const updatedTask = await TaskServices.updateTaskPriorityService(
+      taskId,
+      priority
+    );
+
+    res.status(200).json({
+      data: updatedTask,
+      message: 'Task priority updated successfully',
+    });
+  }
+);

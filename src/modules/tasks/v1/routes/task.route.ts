@@ -10,6 +10,8 @@ import {
   assignTaskController,
   updateTaskController,
   syncTaskToCalendarController,
+  updateTaskStatusController,
+  updateTaskPriorityController,
 } from '../controllers/task.controllers';
 
 const router = Router();
@@ -32,9 +34,9 @@ router.get('/project/:projectId', verifyJwt, getAllTasksController);
 router.patch('/:taskId/assign', assignTaskController);
 
 //update status
-router.patch(':id/status');
+router.patch(':id/status', verifyJwt, updateTaskStatusController);
 //update priority
-router.patch(':id/priority');
+router.patch(':id/priority', verifyJwt, updateTaskPriorityController);
 //add dependency
 router.patch(':id/dependency');
 

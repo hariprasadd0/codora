@@ -10,10 +10,12 @@ import {
 } from '../../../../core/utils/token';
 import { userRepository } from '../repositories/user.repository';
 import * as bcrypt from 'bcrypt';
-import crypto from 'crypto';
 import logger from '../../../../core/utils/logger';
-import User from '../types/user';
-import { createUserSchema, loginUserSchema } from '../schema/user.schema';
+import {
+  createUserSchema,
+  loginUserSchema,
+  UpdateUserDto,
+} from '../schema/user.schema';
 import { sendEmail } from '../../../../core/utils/email';
 import { ApiError } from '../../../../core/utils/ApiError';
 
@@ -72,8 +74,8 @@ export const refreshTokenService = async (userId: number, token: string) => {
 
   return { accessToken };
 };
-export const logoutUserService = async (user: User) => {
-  const userFound = await userRepository.userByEmail(user.email);
+export const logoutUserService = async (email: string) => {
+  const userFound = await userRepository.userByEmail(email);
 
   if (!userFound) {
     throw new ApiError(401, 'user not found');
@@ -100,12 +102,12 @@ export const getUserByIdService = async (userId: number) => {
   return user;
 };
 
-export const updateUserService = async (userId: number, user: User) => {
+export const updateUserService = async (
+  userId: number,
+  user: Partial<UpdateUserDto>
+) => {
   if (typeof userId !== 'number' || userId <= 0) {
     throw new Error('Invalid user id');
-  }
-  if (user.password) {
-    user.password = await bcrypt.hash(user.password, 10);
   }
 
   const updatedUser = await userRepository.updateUserById(userId, user);

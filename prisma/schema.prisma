@@ -26,9 +26,11 @@ model User {
   googleAccessToken     String?
   googleRefreshToken    String?
 
-  createdTeams    Team[]    @relation("TeamCreator")
-  createdProjects Project[] @relation("ProjectCreator")
-  payments        Payment[] @relation("PaidByUser")
+  createdTeams    Team[]       @relation("TeamCreator")
+  createdProjects Project[]    @relation("ProjectCreator")
+  payments        Payment[]    @relation("PaidByUser")
+  Comment         Comment[]
+  Attachment      Attachment[]
 }
 
 model Team {
@@ -88,6 +90,8 @@ model Task {
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   calendar         CalendarEvent[]
+  Comment          Comment[]
+  Attachment       Attachment[]
 }
 
 model Payment {
@@ -121,6 +125,30 @@ model Invitation {
   expiresAt DateTime
   teamId    Int
   team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  text      String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId    Int?
+  task      Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Attachment {
+  id        Int      @id @default(autoincrement())
+  fileName  String
+  fileUrl   String
+  fileType  String?
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId    Int?
+  task      Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Preference {

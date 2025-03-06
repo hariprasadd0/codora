@@ -1,6 +1,6 @@
 import { ApiError } from '../../../../core/utils/ApiError';
 import { calendarRepository } from '../repositories/calendar.repository';
-import { CalendarEventSchema } from '../schema/calendarSchema';
+import { CalendarEvent, CalendarEventSchema } from '../schema/calendarSchema';
 import logger from '../../../../core/utils/logger';
 
 export const createEventService = async (
@@ -26,4 +26,38 @@ export const getEventByIdService = async (userId: number, eventId: number) => {
 };
 export const getUser = async (userId: number) => {
   return await calendarRepository.getUser(userId);
+};
+
+export const updateEventService = async (
+  userId: number,
+  eventId: number,
+  event: Partial<CalendarEvent>
+) => {
+  const user = await calendarRepository.getUser(userId);
+  if (!user) {
+    throw new ApiError(400, 'User not found');
+  }
+  const updatedEvent = await calendarRepository.updateEvent(
+    user.id,
+    eventId,
+    event
+  );
+  logger.info('Event updated successfully', event);
+
+  return updatedEvent;
+};
+
+export const deleteEventService = async (userId: number, eventId: number) => {
+  const user = await calendarRepository.getUser(userId);
+  if (!user) {
+    throw new ApiError(400, 'User not found');
+  }
+  const event = await calendarRepository.getEventById(user.id, eventId);
+  if (!event) {
+    throw new ApiError(404, 'Event not found');
+  }
+  await calendarRepository.deleteEvent(user.id, eventId);
+  logger.info('Event deleted successfully', event);
+
+  return event;
 };

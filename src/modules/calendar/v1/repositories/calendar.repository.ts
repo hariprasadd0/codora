@@ -6,7 +6,9 @@ export const calendarRepository = {
     return await prisma.calendarEvent.create({
       data: {
         userId: id,
-        ...eventData,
+        taskId: eventData.taskId,
+        eventDate: eventData.eventDate,
+        eventType: eventData.EventType,
       },
     });
   },
@@ -23,6 +25,21 @@ export const calendarRepository = {
   getUser: async (userId: number) => {
     return await prisma.user.findUnique({
       where: { id: userId },
+    });
+  },
+  updateEvent: async (
+    userId: number,
+    eventId: number,
+    eventData: Partial<CalendarEvent>
+  ) => {
+    return await prisma.calendarEvent.update({
+      where: { id: eventId, userId },
+      data: eventData,
+    });
+  },
+  deleteEvent: async (userId: number, eventId: number) => {
+    return await prisma.calendarEvent.delete({
+      where: { id: eventId, userId },
     });
   },
 };

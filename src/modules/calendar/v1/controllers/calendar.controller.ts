@@ -54,5 +54,44 @@ export const getCalendarEventByIdController = asyncHandler(
   }
 );
 
-export const updateCalendarEventController = asyncHandler(async () => {});
-export const deleteCalendarEventController = asyncHandler(async () => {});
+export const updateCalendarEventController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = (req as any).user.userId;
+    if (!userId) {
+      logger.error('User not found');
+      return res.status(400).json({ message: 'User not found' });
+    }
+    const eventId = Number(req.params.eventId);
+    const eventData = req.body;
+    const user = await calendarService.getUser(userId);
+    if (!user) {
+      logger.error('User not found');
+      return res.status(400).json({ message: 'User not found' });
+    }
+    const event = await calendarService.updateEventService(
+      userId,
+      eventId,
+      eventData
+    );
+
+    return res.status(200).json({ data: event });
+  }
+);
+export const deleteCalendarEventController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = (req as any).user.userId;
+    if (!userId) {
+      logger.error('User not found');
+      return res.status(400).json({ message: 'User not found' });
+    }
+    const eventId = Number(req.params.eventId);
+    const user = await calendarService.getUser(userId);
+    if (!user) {
+      logger.error('User not found');
+      return res.status(400).json({ message: 'User not found' });
+    }
+    await calendarService.deleteEventService(userId, eventId);
+
+    res.status(204).json();
+  }
+);

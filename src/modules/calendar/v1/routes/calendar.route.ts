@@ -13,12 +13,12 @@ const router = Router();
 
 router.post(
   '/events',
-  validateSchema(CalendarEventSchema),
   verifyJwt,
+  validateSchema(CalendarEventSchema),
   createCalendarEventController
 );
-router.get('/', verifyJwt, getCalendarEventController);
+router.get('/events', verifyJwt, getCalendarEventController);
+router.patch('/events/:eventId', verifyJwt, updateCalendarEventController);
 router.get('/:eventId', verifyJwt, getCalendarEventByIdController);
-router.patch('/:eventId', verifyJwt, updateCalendarEventController);
 router.delete('/:eventId', verifyJwt, deleteCalendarEventController);
 export default router;

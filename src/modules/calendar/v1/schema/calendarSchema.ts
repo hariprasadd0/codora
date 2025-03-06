@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const CalendarEventSchema = z.object({
   taskId: z.number(),
-  eventDate: z.date(),
+  eventDate: z.string().datetime(),
   EventType: z.nativeEnum(EventType),
 });
 

@@ -43,7 +43,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response) => {
   if (err instanceof ZodError) {
     res.status(400).json({ message: 'Validation failed', errors: err.errors });
   }

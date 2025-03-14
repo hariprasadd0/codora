@@ -42,6 +42,9 @@ export const addMemberService = async (teamId: number, email: string) => {
       token,
       expiresAt
     );
+    if (!invitation) {
+      throw new ApiError(400, 'Failed to send invite');
+    }
     const inviteLink = `${process.env.FRONTEND_URL}/teams/invite/${token}`;
     await sendEmail(email, 'Team Invite', inviteLink);
   }

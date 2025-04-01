@@ -43,12 +43,12 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
-app.use((err: Error, req: Request, res: Response) => {
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ZodError) {
     res.status(400).json({ message: 'Validation failed', errors: err.errors });
   }
-  logger.error(err.message);
-  res.status(500).send('Something went wrong');
+  logger.error(err);
+  res.status(500).json(err.message);
 });
 
 app.use('/v1/users', userRoutes);

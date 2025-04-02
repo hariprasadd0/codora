@@ -61,7 +61,13 @@ export const loginUserService = async (user: unknown) => {
 
   await userRepository.updateRefreshToken(userFound.id, refreshToken);
 
-  return { accessToken, refreshToken, userFound };
+  const loggedUser = {
+    id: userFound.id,
+    username: userFound.name,
+    email: userFound.email,
+  };
+
+  return { accessToken, refreshToken, loggedUser };
 };
 export const refreshTokenService = async (userId: number, token: string) => {
   const storedToken = await userRepository.getRefreshToken(userId);

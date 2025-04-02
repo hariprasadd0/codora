@@ -40,15 +40,15 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
 export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const user = req.body;
 
-  const { accessToken, refreshToken, userFound } =
+  const { accessToken, refreshToken, loggedUser } =
     await userService.loginUserService(user);
   const tk = (req.session as any).invitationToken || req.query.inviteToken;
   const token = tk ? tk.toString() : null;
 
-  if (token && userFound) {
+  if (token && loggedUser) {
     const invitation = await userService.getInvitationByToken(token);
     if (invitation && invitation.email === user.email) {
-      await userService.addTeamMemberService(invitation.teamId, userFound.id);
+      await userService.addTeamMemberService(invitation.teamId, loggedUser.id);
       await userService.deleteInviteService(invitation.id);
       delete (req.session as any).invitationToken; // Clear session
     } else {
@@ -61,7 +61,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   logger.info('User logged in', { email: user.email });
-  res.status(200).json({ message: 'Login Success', accessToken });
+  res.status(200).json({ message: 'Login Success', loggedUser, accessToken });
 });
 export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
   const user = req.body;

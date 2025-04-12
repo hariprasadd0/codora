@@ -10,8 +10,8 @@ import * as TaskServices from '../services/task.service';
 export const createTaskController = asyncHandler(
   async (req: Request, res: Response) => {
     const id = req.params.projectId;
-    const projectId = parseInt(id);
-    if (isNaN(projectId)) throw new ApiError(400, 'Project ID not found');
+    const projectId = id;
+    if (!projectId) throw new ApiError(400, 'Project ID not found');
 
     const validatedTask = createTaskSchema.parse(req.body);
 
@@ -36,8 +36,8 @@ export const createTaskController = asyncHandler(
 export const updateTaskController = asyncHandler(
   async (req: Request, res: Response) => {
     const id = req.params.taskId;
-    const taskId = parseInt(id);
-    if (isNaN(taskId)) throw new ApiError(400, 'Task ID not found');
+    const taskId = id;
+    if (!taskId) throw new ApiError(400, 'Task ID not found');
 
     const updateData = updateTaskSchema.parse(req.body);
 
@@ -59,8 +59,8 @@ export const updateTaskController = asyncHandler(
 export const getTaskByIdController = asyncHandler(
   async (req: Request, res: Response) => {
     const id = req.params.taskId;
-    const taskId = parseInt(id);
-    if (isNaN(taskId)) throw new ApiError(400, 'Task ID not found');
+    const taskId = id;
+    if (!taskId) throw new ApiError(400, 'Task ID not found');
 
     const task = await TaskServices.getTaskByIdService(taskId);
 
@@ -74,8 +74,8 @@ export const getTaskByIdController = asyncHandler(
 export const getAllTasksController = asyncHandler(
   async (req: Request, res: Response) => {
     const id = req.params.projectId;
-    const projectId = parseInt(id);
-    if (isNaN(projectId)) throw new ApiError(400, 'Project ID not found');
+    const projectId = id;
+    if (!projectId) throw new ApiError(400, 'Project ID not found');
 
     const tasks = await TaskServices.getAllTasksService(projectId);
 
@@ -89,8 +89,8 @@ export const getAllTasksController = asyncHandler(
 export const deleteTaskController = asyncHandler(
   async (req: Request, res: Response) => {
     const id = req.params.taskId;
-    const taskId = parseInt(id);
-    if (isNaN(taskId)) throw new ApiError(400, 'Task ID not found');
+    const taskId = id;
+    if (!taskId) throw new ApiError(400, 'Task ID not found');
 
     await TaskServices.deleteTaskService(taskId);
 
@@ -105,15 +105,13 @@ export const assignTaskController = asyncHandler(
   async (req: Request, res: Response) => {
     const { assignedToId } = req.body;
 
-    const assignee = parseInt(assignedToId);
-
-    if (isNaN(assignee)) throw new ApiError(400, 'assignedToId not found');
+    const assignee = assignedToId;
 
     if (!assignedToId) throw new ApiError(400, 'assignedToId not found');
 
     const id = req.params.taskId;
-    const taskId = parseInt(id);
-    if (isNaN(taskId)) throw new ApiError(400, 'Task ID not found');
+    const taskId = id;
+    if (!taskId) throw new ApiError(400, 'Task ID not found');
 
     const updatedTask = await TaskServices.assignTaskService(taskId, assignee);
 
@@ -127,8 +125,8 @@ export const assignTaskController = asyncHandler(
 export const syncTaskToCalendarController = asyncHandler(
   async (req: Request, res: Response) => {
     const id = req.params.taskId;
-    const taskId = parseInt(id);
-    if (isNaN(taskId)) throw new ApiError(400, 'Task ID not found');
+    const taskId = id;
+    if (!taskId) throw new ApiError(400, 'Task ID not found');
 
     await TaskServices.syncTaskToCalendarService(taskId);
 
@@ -139,8 +137,8 @@ export const syncTaskToCalendarController = asyncHandler(
 export const updateTaskStatusController = asyncHandler(
   async (req: Request, res: Response) => {
     const id = req.params.taskId;
-    const taskId = parseInt(id);
-    if (isNaN(taskId)) throw new ApiError(400, 'Task ID not found');
+    const taskId = id;
+    if (!taskId) throw new ApiError(400, 'Task ID not found');
 
     const { status } = req.body;
 
@@ -161,8 +159,8 @@ export const updateTaskStatusController = asyncHandler(
 export const updateTaskPriorityController = asyncHandler(
   async (req: Request, res: Response) => {
     const id = req.params.taskId;
-    const taskId = parseInt(id);
-    if (isNaN(taskId)) throw new ApiError(400, 'Task ID not found');
+    const taskId = id;
+    if (!taskId) throw new ApiError(400, 'Task ID not found');
 
     const { priority } = req.body;
 

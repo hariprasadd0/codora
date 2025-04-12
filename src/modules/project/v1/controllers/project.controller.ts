@@ -18,7 +18,7 @@ export const createProjectController = asyncHandler(
 
 export const getProjectController = asyncHandler(
   async (req: Request, res: Response) => {
-    const projectId = parseInt(req.params.projectId);
+    const projectId = req.params.projectId;
     const project = await projectService.getProjectService(projectId);
     res.status(200).json({ project });
   }
@@ -36,7 +36,7 @@ export const listProjectController = asyncHandler(
 
 export const updateProjectController = asyncHandler(
   async (req: Request, res: Response) => {
-    const projectId = parseInt(req.params.projectId);
+    const projectId = req.params.projectId;
     const projectData = req.body;
     const project = await projectService.updateProjectService(
       projectId,
@@ -48,7 +48,7 @@ export const updateProjectController = asyncHandler(
 
 export const deleteProjectController = asyncHandler(
   async (req: Request, res: Response) => {
-    const projectId = parseInt(req.params.projectId);
+    const projectId = req.params.projectId;
     await projectService.deleteProjectService(projectId);
     res.status(200).json({ message: 'Project deleted' });
   }
@@ -57,8 +57,8 @@ export const deleteProjectController = asyncHandler(
 export const convertToTeamController = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = (req as any).user.userId;
-    const projectId = parseInt(req.params.projectId);
-    const teamId = parseInt(req.body.teamId);
+    const projectId = req.params.projectId;
+    const teamId = req.body.teamId;
     const team = req.body;
 
     if (!teamId && !team) {

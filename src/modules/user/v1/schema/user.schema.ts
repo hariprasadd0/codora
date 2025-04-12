@@ -4,13 +4,19 @@ export const createUserSchema = z.object({
   name: z.string().nonempty().trim(),
   email: z.string().email(),
   password: z.string().min(8),
-  preference: z.string().optional(),
+  preference: z
+    .enum(['MORNING', 'AFTERNOON', 'NIGHT'])
+    .default('MORNING')
+    .optional(),
 });
 
 export const updateUserSchema = z.object({
   name: z.string().nonempty().trim().optional(),
   email: z.string().email().optional(),
-  preference: z.string().optional(),
+  preference: z
+    .enum(['MORNING', 'AFTERNOON', 'NIGHT'])
+    .default('MORNING')
+    .optional(),
 });
 
 export const loginUserSchema = z.object({

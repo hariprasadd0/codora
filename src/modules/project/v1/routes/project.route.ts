@@ -19,8 +19,8 @@ router.post(
   validateSchema(createProjectSchema),
   createProjectController
 );
+router.get('/all-projects', verifyJwt, listProjectController);
 router.get('/:projectId', verifyJwt, getProjectController);
-router.get('/', verifyJwt, listProjectController);
 router.patch('/:projectId', verifyJwt, updateProjectController);
 router.delete('/:projectId', verifyJwt, deleteProjectController);
 

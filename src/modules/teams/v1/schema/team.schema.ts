@@ -13,12 +13,12 @@ const TeamUpdateSchema = z.object({
 });
 
 const AddTeamMemberSchema = z.object({
-  userId: z.number().int().positive(),
+  userId: z.string(),
   role: TeamRole.default('MEMBER'),
 });
 
 const RemoveTeamMemberSchema = z.object({
-  userId: z.number().int().positive(),
+  userId: z.string(),
 });
 
 export type TeamCreateDto = z.infer<typeof TeamCreateSchema>;

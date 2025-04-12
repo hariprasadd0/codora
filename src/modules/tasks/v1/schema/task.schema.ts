@@ -8,8 +8,8 @@ export const createTaskSchema = z.object({
   description: z.string().optional(),
   status: Status.default('PENDING'),
   priority: Priority.default('MEDIUM'),
-  assignedToId: z.number().int().positive().optional(),
-  dependencyTaskId: z.number().int().positive().optional(),
+  assignedToId: z.string().optional(),
+  dependencyTaskId: z.string().optional(),
   deadline: z.coerce.date().optional(),
 });
 export const updateTaskSchema = z.object({
@@ -17,8 +17,8 @@ export const updateTaskSchema = z.object({
   description: z.string().optional(),
   status: Status.default('PENDING').optional(),
   priority: Priority.default('MEDIUM').optional(),
-  assignedToId: z.number().int().positive().optional(),
-  dependencyTaskId: z.number().int().positive().optional(),
+  assignedToId: z.string().optional(),
+  dependencyTaskId: z.string().optional(),
   deadline: z.coerce.date().optional(),
 });
 

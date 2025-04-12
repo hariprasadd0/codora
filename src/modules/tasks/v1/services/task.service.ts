@@ -9,7 +9,7 @@ import { Priority, Status } from '@prisma/client';
  * Create a new task within a project
  */
 export const createTaskService = async (
-  projectId: number,
+  projectId: string,
   task: createTaskDto
 ) => {
   // Check if project exists
@@ -55,8 +55,8 @@ export const createTaskService = async (
  * Assign a task to a user
  */
 export const assignTaskService = async (
-  taskId: number,
-  assignedToId: number
+  taskId: string,
+  assignedToId: string
 ) => {
   const updatedTask = await TaskRepository.assignTaskTransactional(
     taskId,
@@ -73,7 +73,7 @@ export const assignTaskService = async (
  * Update a task's details
  */
 export const updateTaskService = async (
-  taskId: number,
+  taskId: string,
   updateData: updateTaskDto
 ) => {
   // Check if task exists
@@ -92,7 +92,7 @@ export const updateTaskService = async (
 /**
  * Get a task by ID
  */
-export const getTaskByIdService = async (taskId: number) => {
+export const getTaskByIdService = async (taskId: string) => {
   const task = await TaskRepository.getTaskById(taskId);
   if (!task) {
     logger.error(`Task not found: ${taskId}`);
@@ -104,7 +104,7 @@ export const getTaskByIdService = async (taskId: number) => {
 /**
  * Get all tasks for a project
  */
-export const getAllTasksService = async (projectId: number) => {
+export const getAllTasksService = async (projectId: string) => {
   const project = await TaskRepository.getProject(projectId);
   if (!project) {
     logger.error(`Project not found: ${projectId}`);
@@ -118,7 +118,7 @@ export const getAllTasksService = async (projectId: number) => {
 /**
  * Delete a task
  */
-export const deleteTaskService = async (taskId: number) => {
+export const deleteTaskService = async (taskId: string) => {
   const task = await TaskRepository.getTaskById(taskId);
   if (!task) {
     logger.error(`Task not found: ${taskId}`);
@@ -130,7 +130,7 @@ export const deleteTaskService = async (taskId: number) => {
   return { message: 'Task deleted successfully' };
 };
 
-export const syncTaskToCalendarService = async (taskId: number) => {
+export const syncTaskToCalendarService = async (taskId: string) => {
   const task = await TaskRepository.getTaskById(taskId);
   if (!task) {
     logger.error(`Task not found: ${taskId}`);
@@ -156,7 +156,7 @@ export const syncTaskToCalendarService = async (taskId: number) => {
  * Update task status
  */
 export const updateTaskStatusService = async (
-  taskId: number,
+  taskId: string,
   status: Status
 ) => {
   const task = await TaskRepository.getTaskById(taskId);
@@ -178,7 +178,7 @@ export const updateTaskStatusService = async (
  * Update task priority
  */
 export const updateTaskPriorityService = async (
-  taskId: number,
+  taskId: string,
   priority: Priority
 ) => {
   const task = await TaskRepository.getTaskById(taskId);

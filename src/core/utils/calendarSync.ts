@@ -4,13 +4,13 @@ import prisma from '../config/prisma';
 import logger from './logger';
 
 interface Task {
-  id: number;
+  id: string;
   title: string;
   description: string;
   status: string;
   priority: string;
-  assignedToId: number;
-  dependencyTaskId: number;
+  assignedToId: string;
+  dependencyTaskId: string;
   deadline: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -70,7 +70,7 @@ export const bulkSync = async (
 };
 
 export const syncTaskToCalendar = async (
-  taskId: number,
+  taskId: string,
   googleCredentials: { accessToken: string; refreshToken: string }
 ) => {
   const task = await prisma.task.findUnique({

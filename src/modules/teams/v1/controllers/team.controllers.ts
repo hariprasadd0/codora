@@ -27,7 +27,7 @@ export const createTeamController = asyncHandler(
 export const getTeamController = asyncHandler(
   async (req: Request, res: Response) => {
     const { teamId } = req.params;
-    const id = parseInt(teamId);
+    const id = teamId;
     const team = await teamService.getTeamService(id);
     res.status(200).json({
       data: team,
@@ -41,7 +41,7 @@ export const getTeamController = asyncHandler(
 export const updateTeamController = asyncHandler(
   async (req: Request, res: Response) => {
     const { teamId } = req.params;
-    const id = parseInt(teamId);
+    const id = teamId;
     const team = req.body;
 
     const updatedTeam = await teamService.updateTeamService(id, team);
@@ -57,7 +57,7 @@ export const updateTeamController = asyncHandler(
 export const deleteTeamController = asyncHandler(
   async (req: Request, res: Response) => {
     const { teamId } = req.params;
-    const id = parseInt(teamId);
+    const id = teamId;
     const team = await teamService.getTeamService(id);
 
     if (team?.createdById !== (req as any).user.userId)
@@ -69,7 +69,7 @@ export const deleteTeamController = asyncHandler(
 export const addTeamMemberController = asyncHandler(
   async (req: Request, res: Response) => {
     const { teamId } = req.params;
-    const id = parseInt(teamId);
+    const id = teamId;
     const { email } = req.body;
     const member = await teamService.addMemberService(id, email);
     res.status(200).json({
@@ -86,8 +86,8 @@ export const removeTeamMemberController = asyncHandler(
   async (req: Request, res: Response) => {
     const { teamId, userId } = req.params;
 
-    const teamIdInt = parseInt(teamId);
-    const id = parseInt(userId);
+    const teamIdInt = teamId;
+    const id = userId;
     await teamService.removeTeamMemberService(teamIdInt, id);
     res.status(200).json({
       data: null,
@@ -102,8 +102,8 @@ export const removeTeamMemberController = asyncHandler(
 export const getTeamMembersController = asyncHandler(
   async (req: Request, res: Response) => {
     const { teamId } = req.params;
-    const teamIdInt = Number(teamId);
-    if (isNaN(teamIdInt)) {
+    const teamIdInt = teamId;
+    if (teamIdInt) {
       throw new ApiError(400, 'Invalid team ID');
     }
     const { userId } = req.body;

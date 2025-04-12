@@ -97,7 +97,7 @@ export const refreshToken = asyncHandler(
     const decoded = jwt.verify(
       token,
       process.env.JWT_REFRESH_SECRET! as string
-    ) as { userId: number };
+    ) as { userId: string };
     if (!decoded) {
       return res.status(401).json({ error: 'Unauthorized: Invalid token' });
     }
@@ -125,8 +125,8 @@ export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getUserById = asyncHandler(async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  if (isNaN(id)) {
+  const id = req.params.id;
+  if (!id) {
     return res.status(400).json({ error: 'Invalid user ID' });
   }
   const user = await userService.getUserByIdService(id);
@@ -134,7 +134,7 @@ export const getUserById = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`User found: id=${user.id}`);
 
   res.status(200).json({
-    data: user,
+    ...user,
     meta: {
       version: '1.0',
       timestamp: new Date().toISOString(),
@@ -143,9 +143,10 @@ export const getUserById = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {
-  const id = parseInt((req as any).user);
+  const id = (req as any).user.userId;
   const user = req.body;
-  if (isNaN(id)) {
+
+  if (!id) {
     return res.status(400).json({ error: 'Invalid user ID' });
   }
   const updatedUser = await userService.updateUserService(id, user);
@@ -161,9 +162,9 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
 
 export const setPreference = asyncHandler(
   async (req: Request, res: Response) => {
-    const id = parseInt((req as any).user);
+    const id = (req as any).user;
     const preference = req.body.preference;
-    if (isNaN(id)) {
+    if (!id) {
       return res.status(400).json({ error: 'Invalid user ID' });
     }
     const updatedUser = await userService.setPreferenceService(id, preference);
@@ -181,7 +182,7 @@ export const setPreference = asyncHandler(
 export const calendarStatusController = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = (req as any).user.userId;
-    if (!userId || isNaN(userId)) throw new Error('Invalid user Id');
+    if (!userId) throw new Error('Invalid user Id');
 
     const status = await userService.calendarStatusService(userId);
     res.status(200).json({
@@ -197,7 +198,7 @@ export const calendarStatusController = asyncHandler(
 export const calendarEnableController = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = (req as any).user.userId;
-    if (!userId || isNaN(userId)) {
+    if (!userId) {
       return res.status(400).json({ error: 'Invalid user ID' });
     }
 
@@ -216,10 +217,10 @@ export const calendarCallbackController = asyncHandler(
   async (req: Request, res: Response) => {
     const { code, state } = req.query;
 
-    const userId = parseInt(state as string);
-    if (!userId || isNaN(userId)) throw new Error('userid mismatch');
+    const userId = state as string;
+    if (!userId) throw new Error('userid mismatch');
 
-    if (!code || isNaN(userId)) {
+    if (!code || !userId) {
       return res.status(400).json({ error: 'Invalid request' });
     }
     try {
@@ -246,7 +247,7 @@ export const calendarCallbackController = asyncHandler(
 export const calendarDisableController = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = (req as any).user.userId;
-    if (isNaN(userId)) {
+    if (!userId) {
       return res.status(400).json({ error: 'Invalid user ID' });
     }
     await userService.disableCalendarService(userId, {

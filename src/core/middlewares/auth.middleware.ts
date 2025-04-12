@@ -24,11 +24,11 @@ export const verifyJwt: RequestHandler = (
     next();
   } catch (error: any) {
     if (error.name === 'TokenExpiredError') {
-      res.status(401).json({ error: 'Unauthorized: Token has expired' });
+      res.status(401).json({ error: 'TokenExpiredError' });
       return;
     }
     if (error.name === 'JsonWebTokenError') {
-      res.status(401).json({ error: 'Unauthorized: Invalid token' });
+      res.status(401).json({ error: 'Invalid token' });
       return;
     }
   }
@@ -49,7 +49,7 @@ export const isTeamLead = async (
     }
 
     // Check if the user is a team lead
-    const isLead = await isUserTeamLead(user.userId, Number(teamId));
+    const isLead = await isUserTeamLead(user.userId, teamId);
 
     if (!isLead) {
       res.status(403).json({

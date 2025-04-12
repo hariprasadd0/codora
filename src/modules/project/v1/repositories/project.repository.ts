@@ -4,7 +4,7 @@ import { TeamCreateDto } from '../../../teams/v1/schema/team.schema';
 import { CreateProjectDto, UpdateProjectDto } from '../schema/project.schema';
 export const createProject = async (
   project: CreateProjectDto,
-  userId: number
+  userId: string
 ) => {
   return await prisma.project.create({
     data: {
@@ -13,20 +13,20 @@ export const createProject = async (
     },
   });
 };
-export const listProject = async (userId: number) => {
+export const listProject = async (userId: string) => {
   return await prisma.project.findMany({
     where: { createdById: userId },
     orderBy: { createdAt: 'asc' },
   });
 };
-export const getProjectById = async (projectId: number) => {
+export const getProjectById = async (projectId: string) => {
   return await prisma.project.findUnique({
     where: { id: projectId },
   });
 };
 
 export const updateProjectById = async (
-  projectId: number,
+  projectId: string,
   project: Partial<UpdateProjectDto>
 ) => {
   return await prisma.project.update({
@@ -37,15 +37,15 @@ export const updateProjectById = async (
   });
 };
 
-export const deleteProject = async (projectId: number) => {
+export const deleteProject = async (projectId: string) => {
   return await prisma.project.delete({
     where: { id: projectId },
   });
 };
 
 export const addMemberToProject = async (
-  projectId: number,
-  memberId: number
+  projectId: string,
+  memberId: string
 ) => {
   return await prisma.$transaction(async (tx) => {
     const project = await tx.project.findUnique({
@@ -82,7 +82,7 @@ export const addMemberToProject = async (
   });
 };
 
-export const convertToTeam = async (projectId: number, teamId: number) => {
+export const convertToTeam = async (projectId: string, teamId: string) => {
   return await prisma.$transaction(async (tx) => {
     const project = await tx.project.findUnique({
       where: { id: projectId },
@@ -97,8 +97,8 @@ export const convertToTeam = async (projectId: number, teamId: number) => {
 };
 
 export const createTeam = async (
-  projectId: number,
-  userId: number,
+  projectId: string,
+  userId: string,
   team: TeamCreateDto
 ) => {
   return await prisma.$transaction(async (tx) => {

@@ -4,7 +4,7 @@ import { CalendarEvent, CalendarEventSchema } from '../schema/calendarSchema';
 import logger from '../../../../core/utils/logger';
 
 export const createEventService = async (
-  userId: number,
+  userId: string,
   eventData: unknown
 ) => {
   const event = CalendarEventSchema.parse(eventData);
@@ -18,19 +18,19 @@ export const createEventService = async (
   return newEvent;
 };
 
-export const getEventsService = async (userId: number) => {
+export const getEventsService = async (userId: string) => {
   return await calendarRepository.getEvents(userId);
 };
-export const getEventByIdService = async (userId: number, eventId: number) => {
+export const getEventByIdService = async (userId: string, eventId: string) => {
   return await calendarRepository.getEventById(userId, eventId);
 };
-export const getUser = async (userId: number) => {
+export const getUser = async (userId: string) => {
   return await calendarRepository.getUser(userId);
 };
 
 export const updateEventService = async (
-  userId: number,
-  eventId: number,
+  userId: string,
+  eventId: string,
   event: Partial<CalendarEvent>
 ) => {
   const user = await calendarRepository.getUser(userId);
@@ -47,7 +47,7 @@ export const updateEventService = async (
   return updatedEvent;
 };
 
-export const deleteEventService = async (userId: number, eventId: number) => {
+export const deleteEventService = async (userId: string, eventId: string) => {
   const user = await calendarRepository.getUser(userId);
   if (!user) {
     throw new ApiError(400, 'User not found');

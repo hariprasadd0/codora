@@ -4,7 +4,7 @@ import { ApiError } from '../../../../core/utils/ApiError';
 import logger from '../../../../core/utils/logger';
 
 export const TaskRepository = {
-  addTask: async (projectId: number, tasks: createTaskDto) => {
+  addTask: async (projectId: string, tasks: createTaskDto) => {
     const task = await prisma.task.create({
       data: {
         projectId,
@@ -13,38 +13,38 @@ export const TaskRepository = {
     });
     return task;
   },
-  getProject: async (projectId: number) => {
+  getProject: async (projectId: string) => {
     return prisma.project.findUnique({
       where: { id: projectId },
     });
   },
-  checkDependecny: async (dependencyTaskId: number) => {
+  checkDependecny: async (dependencyTaskId: string) => {
     return await prisma.task.findUnique({
       where: { id: dependencyTaskId },
       select: { projectId: true },
     });
   },
-  checkAssigned: async (assignedToId: number) => {
+  checkAssigned: async (assignedToId: string) => {
     return await prisma.user.findUnique({
       where: { id: assignedToId },
     });
   },
-  alreadyAssigned: async (taskId: number, userId: number) => {
+  alreadyAssigned: async (taskId: string, userId: string) => {
     return await prisma.task.findUnique({
       where: { id: taskId, assignedToId: userId },
     });
   },
-  getTaskById: async (taskId: number) => {
+  getTaskById: async (taskId: string) => {
     return await prisma.task.findUnique({
       where: { id: taskId },
     });
   },
-  getAllTasksByProject: async (projectId: number) => {
+  getAllTasksByProject: async (projectId: string) => {
     return await prisma.task.findMany({
       where: { projectId },
     });
   },
-  assignTask: async (userId: number, taskId: number) => {
+  assignTask: async (userId: string, taskId: string) => {
     return await prisma.task.update({
       where: { id: taskId },
       data: {
@@ -52,7 +52,7 @@ export const TaskRepository = {
       },
     });
   },
-  updateTask: async (taskId: number, task: Partial<updateTaskDto>) => {
+  updateTask: async (taskId: string, task: Partial<updateTaskDto>) => {
     return await prisma.task.update({
       where: { id: taskId },
       data: {
@@ -61,13 +61,13 @@ export const TaskRepository = {
     });
   },
 
-  deleteTask: async (taskId: number) => {
+  deleteTask: async (taskId: string) => {
     return await prisma.task.delete({
       where: { id: taskId },
     });
   },
 
-  assignTaskTransactional: async (taskId: number, assignedToId: number) => {
+  assignTaskTransactional: async (taskId: string, assignedToId: string) => {
     return await prisma.$transaction(async (tx) => {
       const [task, user] = await Promise.all([
         tx.task.findFirst({ where: { id: taskId } }),
@@ -117,7 +117,7 @@ export const TaskRepository = {
     });
   },
   //for testing
-  getUser: async (userId: number) => {
+  getUser: async (userId: string) => {
     return await prisma.user.findUnique({
       where: { id: userId },
       select: {

@@ -42,7 +42,7 @@ export const getCalendarEventByIdController = asyncHandler(
       logger.error('User not found');
       return res.status(400).json({ message: 'User not found' });
     }
-    const eventId = Number(req.params.eventId);
+    const eventId = req.params.eventId;
     const user = await calendarService.getUser(userId);
     if (!user) {
       logger.error('User not found');
@@ -61,7 +61,7 @@ export const updateCalendarEventController = asyncHandler(
       logger.error('User not found');
       return res.status(400).json({ message: 'User not found' });
     }
-    const eventId = Number(req.params.eventId);
+    const eventId = req.params.eventId;
     const eventData = req.body;
     const user = await calendarService.getUser(userId);
     if (!user) {
@@ -84,7 +84,7 @@ export const deleteCalendarEventController = asyncHandler(
       logger.error('User not found');
       return res.status(400).json({ message: 'User not found' });
     }
-    const eventId = Number(req.params.eventId);
+    const eventId = req.params.eventId;
     const user = await calendarService.getUser(userId);
     if (!user) {
       logger.error('User not found');

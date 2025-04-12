@@ -2,7 +2,7 @@ import { EventType } from '@prisma/client';
 import { z } from 'zod';
 
 export const CalendarEventSchema = z.object({
-  taskId: z.number(),
+  taskId: z.string(),
   eventDate: z.string().datetime(),
   EventType: z.nativeEnum(EventType),
 });

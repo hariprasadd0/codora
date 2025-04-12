@@ -69,7 +69,7 @@ export const loginUserService = async (user: unknown) => {
 
   return { accessToken, refreshToken, loggedUser };
 };
-export const refreshTokenService = async (userId: number, token: string) => {
+export const refreshTokenService = async (userId: string, token: string) => {
   const storedToken = await userRepository.getRefreshToken(userId);
   if (!storedToken || !storedToken.refreshToken)
     throw new ApiError(401, 'No user Found');
@@ -95,8 +95,8 @@ export const getAllUsersService = async () => {
 
   return users;
 };
-export const getUserByIdService = async (userId: number) => {
-  if (typeof userId !== 'number' || userId <= 0) {
+export const getUserByIdService = async (userId: string) => {
+  if (!userId) {
     throw new Error('Invalid user id');
   }
 
@@ -109,10 +109,10 @@ export const getUserByIdService = async (userId: number) => {
 };
 
 export const updateUserService = async (
-  userId: number,
+  userId: string,
   user: Partial<UpdateUserDto>
 ) => {
-  if (typeof userId !== 'number' || userId <= 0) {
+  if (!userId || userId.trim() === '') {
     throw new Error('Invalid user id');
   }
 
@@ -124,8 +124,12 @@ export const updateUserService = async (
   return updatedUser;
 };
 
-export const deleteUserService = async (userId: number) => {
-  if (typeof userId !== 'number' || userId <= 0) {
+export const deleteUserService = async (userId: string) => {
+  if (
+    typeof userId !== 'string' ||
+    isNaN(Number(userId)) ||
+    Number(userId) <= 0
+  ) {
     throw new Error('Invalid user id');
   }
 
@@ -160,10 +164,14 @@ export const resetPassword = async (token: string, newPassword: string) => {
 };
 
 export const setPreferenceService = async (
-  userId: number,
+  userId: string,
   preference: string
 ) => {
-  if (typeof userId !== 'number' || userId <= 0) {
+  if (
+    typeof userId !== 'string' ||
+    isNaN(Number(userId)) ||
+    Number(userId) <= 0
+  ) {
     throw new Error('Invalid user id');
   }
 
@@ -178,14 +186,14 @@ export const setPreferenceService = async (
   return changedPreference;
 };
 
-export const calendarStatusService = async (userId: number) => {
-  if (!userId || isNaN(userId)) throw new Error('Invalid user Id');
+export const calendarStatusService = async (userId: string) => {
+  if (!userId || userId) throw new Error('Invalid user Id');
 
   return await userRepository.calendarStatus(userId);
 };
 
 export const callbackCalendarService = async (
-  userId: number,
+  userId: string,
   data: any,
   tokens: any
 ) => {
@@ -193,7 +201,7 @@ export const callbackCalendarService = async (
 };
 
 export const disableCalendarService = async (
-  userId: number,
+  userId: string,
   user: {
     googleCalendarEnabled?: boolean;
     googleAccessToken?: string | null;
@@ -212,10 +220,10 @@ export const getInvitationByToken = async (token: string) => {
   return await userRepository.getInvitation(token);
 };
 
-export const deleteInviteService = async (inviteId: number) => {
+export const deleteInviteService = async (inviteId: string) => {
   return await userRepository.deleteInvite(inviteId);
 };
 
-export const addTeamMemberService = async (teamId: number, userId: number) => {
+export const addTeamMemberService = async (teamId: string, userId: string) => {
   return await userRepository.addTeamMember(teamId, userId);
 };

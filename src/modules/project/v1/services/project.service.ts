@@ -13,20 +13,20 @@ import {
 
 export const createProjectService = async (
   project: unknown,
-  userId: number
+  userId: string
 ) => {
   const validated = createProjectSchema.parse(project);
   return await projectRepository.createProject(validated, userId);
 };
 
-export const getProjectService = async (projectId: number) => {
+export const getProjectService = async (projectId: string) => {
   if (!projectId) {
     throw new ApiError(409, 'projectId not found');
   }
   return await projectRepository.getProjectById(projectId);
 };
 
-export const listProjectService = async (userId: number) => {
+export const listProjectService = async (userId: string) => {
   if (!userId) {
     throw new ApiError(409, 'userId not found');
   }
@@ -34,37 +34,37 @@ export const listProjectService = async (userId: number) => {
 };
 
 export const updateProjectService = async (
-  projectId: number,
+  projectId: string,
   project: unknown
 ) => {
   const validated = updateProjectSchema.parse(project);
   await projectRepository.updateProjectById(projectId, validated);
 };
 
-export const deleteProjectService = async (projectId: number) => {
+export const deleteProjectService = async (projectId: string) => {
   await projectRepository.deleteProject(projectId);
 };
 
 export const addCollaboratorService = async (
-  projectId: number,
-  memberId: number
+  projectId: string,
+  memberId: string
 ) => {
   return await projectRepository.addMemberToProject(projectId, memberId);
 };
 
 export const convertToTeamService = async (
-  projectId: number,
-  teamId: number
+  projectId: string,
+  teamId: string
 ) => {
-  if (isNaN(teamId)) {
+  if (teamId) {
     throw new ApiError(409, 'Team ID not found');
   }
   return await projectRepository.convertToTeam(projectId, teamId);
 };
 
 export const createTeamService = async (
-  projectId: number,
-  userId: number,
+  projectId: string,
+  userId: string,
   team: TeamCreateDto
 ) => {
   return await projectRepository.createTeam(projectId, userId, team);

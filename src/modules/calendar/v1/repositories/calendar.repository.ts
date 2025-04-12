@@ -2,7 +2,7 @@ import prisma from '../../../../core/config/prisma';
 import { CalendarEvent } from '../schema/calendarSchema';
 
 export const calendarRepository = {
-  createEvent: async (id: number, eventData: CalendarEvent) => {
+  createEvent: async (id: string, eventData: CalendarEvent) => {
     return await prisma.calendarEvent.create({
       data: {
         userId: id,
@@ -12,24 +12,24 @@ export const calendarRepository = {
       },
     });
   },
-  getEvents: async (userId: number) => {
+  getEvents: async (userId: string) => {
     return await prisma.calendarEvent.findMany({
       where: { userId },
     });
   },
-  getEventById: async (userId: number, eventId: number) => {
+  getEventById: async (userId: string, eventId: string) => {
     return await prisma.calendarEvent.findUnique({
       where: { id: eventId, userId },
     });
   },
-  getUser: async (userId: number) => {
+  getUser: async (userId: string) => {
     return await prisma.user.findUnique({
       where: { id: userId },
     });
   },
   updateEvent: async (
-    userId: number,
-    eventId: number,
+    userId: string,
+    eventId: string,
     eventData: Partial<CalendarEvent>
   ) => {
     return await prisma.calendarEvent.update({
@@ -37,7 +37,7 @@ export const calendarRepository = {
       data: eventData,
     });
   },
-  deleteEvent: async (userId: number, eventId: number) => {
+  deleteEvent: async (userId: string, eventId: string) => {
     return await prisma.calendarEvent.delete({
       where: { id: eventId, userId },
     });

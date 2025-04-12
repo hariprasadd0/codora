@@ -22,7 +22,7 @@ export const userRepository = {
       },
     });
   },
-  userById: async (userId: number) => {
+  userById: async (userId: string) => {
     return await prisma.user.findUnique({
       where: {
         id: userId,
@@ -40,7 +40,7 @@ export const userRepository = {
       },
     });
   },
-  updateUserById: async (userId: number, user: Partial<UpdateUserDto>) => {
+  updateUserById: async (userId: string, user: Partial<UpdateUserDto>) => {
     return await prisma.user.update({
       where: {
         id: userId,
@@ -48,10 +48,11 @@ export const userRepository = {
       data: {
         name: user.name,
         email: user.email,
+        preference: user.preference,
       },
     });
   },
-  updateRefreshToken: async (userId: number, refreshToken: string) => {
+  updateRefreshToken: async (userId: string, refreshToken: string) => {
     return await prisma.user.update({
       where: {
         id: userId,
@@ -71,14 +72,14 @@ export const userRepository = {
       },
     });
   },
-  deleteUserById: async (userId: number) => {
+  deleteUserById: async (userId: string) => {
     return await prisma.user.delete({
       where: {
         id: userId,
       },
     });
   },
-  passwordReset: async (id: number, password: string) => {
+  passwordReset: async (id: string, password: string) => {
     return await prisma.user.update({
       where: {
         id,
@@ -88,7 +89,7 @@ export const userRepository = {
       },
     });
   },
-  setPreference: async (userId: number, preference: any) => {
+  setPreference: async (userId: string, preference: any) => {
     return await prisma.user.update({
       where: {
         id: userId,
@@ -98,7 +99,7 @@ export const userRepository = {
       },
     });
   },
-  getRefreshToken: async (userId: number) => {
+  getRefreshToken: async (userId: string) => {
     return await prisma.user.findUnique({
       where: {
         id: userId,
@@ -108,7 +109,7 @@ export const userRepository = {
       },
     });
   },
-  calendarStatus: async (userId: number) => {
+  calendarStatus: async (userId: string) => {
     const Calstatus = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -117,7 +118,7 @@ export const userRepository = {
     });
     return !!Calstatus?.googleCalendarId;
   },
-  enableCalendar: async (userId: number, data: any, tokens: any) => {
+  enableCalendar: async (userId: string, data: any, tokens: any) => {
     return await prisma.user.update({
       where: { id: userId },
       data: {
@@ -128,7 +129,7 @@ export const userRepository = {
       },
     });
   },
-  disableCalendar: async (userId: number, data: any) => {
+  disableCalendar: async (userId: string, data: any) => {
     return await prisma.user.update({
       where: { id: userId },
       data: {
@@ -143,14 +144,14 @@ export const userRepository = {
       },
     });
   },
-  deleteInvite: async (inviteId: number) => {
+  deleteInvite: async (inviteId: string) => {
     return await prisma.invitation.delete({
       where: {
         id: inviteId,
       },
     });
   },
-  addTeamMember: async (teamId: number, userId: number) => {
+  addTeamMember: async (teamId: string, userId: string) => {
     return await prisma.teamMember.create({
       data: {
         teamId: teamId,

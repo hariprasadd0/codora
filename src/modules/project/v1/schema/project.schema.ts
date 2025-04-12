@@ -10,7 +10,7 @@ const ProjectStatus = z.enum([
 export const createProjectSchema = z.object({
   name: z.string().min(1, 'Project name is required').max(100),
   description: z.string().max(500).optional(),
-  teamId: z.number().int().positive().optional(),
+  teamId: z.string().optional(),
   newTeam: z
     .object({
       name: z.string().min(1, 'Team name is required').max(100),
@@ -28,7 +28,7 @@ export const updateProjectSchema = z.object({
 });
 
 export const ConvertToTeamProjectSchema = z.object({
-  teamId: z.number().int().positive().optional(),
+  teamId: z.string().optional(),
   newTeam: z
     .object({
       name: z.string().min(1, 'Team name is required').max(100),

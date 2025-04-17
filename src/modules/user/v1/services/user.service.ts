@@ -24,8 +24,7 @@ export const createNewUser = async (user: unknown) => {
 
   const userExist = await userRepository.userByEmail(validated.email);
 
-  if (userExist) throw new Error('User already exists');
-
+  if (userExist) throw new ApiError(401, 'User already exists');
   const hashedPassword = await bcrypt.hash(validated.password, 10);
 
   const newUser = await userRepository.create({

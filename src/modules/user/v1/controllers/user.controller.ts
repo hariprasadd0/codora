@@ -8,33 +8,29 @@ import { google } from 'googleapis';
 
 export const createUser = asyncHandler(async (req: Request, res: Response) => {
   const user = req.body;
-  try {
-    const { newUser, accessToken, refreshToken } =
-      await userService.createNewUser(user);
-    const tk = (req.session as any).invitationToken || req.query.inviteToken;
-    const token = tk ? tk.toString() : null;
+  const { newUser, accessToken, refreshToken } =
+    await userService.createNewUser(user);
 
-    if (token && newUser) {
-      const invitation = await userService.getInvitationByToken(token);
-      if (invitation && invitation.email === user.email) {
-        await userService.addTeamMemberService(invitation.teamId, newUser?.id);
-        await userService.deleteInviteService(invitation.id);
-        delete (req.session as any).invitationToken; // Clear session
-      } else {
-        res.status(400).send('Email mismatch or invalid invitation');
-        return;
-      }
+  const tk = (req.session as any).invitationToken || req.query.inviteToken;
+  const token = tk ? tk.toString() : null;
+
+  if (token && newUser) {
+    const invitation = await userService.getInvitationByToken(token);
+    if (invitation && invitation.email === user.email) {
+      await userService.addTeamMemberService(invitation.teamId, newUser?.id);
+      await userService.deleteInviteService(invitation.id);
+      delete (req.session as any).invitationToken; // Clear session
+    } else {
+      res.status(400).send('Email mismatch or invalid invitation');
+      return;
     }
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-    res.status(201).json({ data: newUser, accessToken });
-  } catch (err) {
-    logger.error('Failed to create user', { err });
-    res.status(500).json({ error: 'Internal server error' });
   }
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+  res.status(201).json({ data: newUser, accessToken });
 });
 
 export const loginUser = asyncHandler(async (req: Request, res: Response) => {

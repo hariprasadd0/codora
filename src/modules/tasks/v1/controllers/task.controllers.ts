@@ -83,6 +83,15 @@ export const getAllTasksController = asyncHandler(
   }
 );
 
+export const listAllTaskController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const id = (req as any).user.userId;
+    if (!id) throw new ApiError(400, 'User ID not found');
+    const tasks = await TaskServices.listAllTasksService(id);
+    res.status(200).json(tasks);
+  }
+);
+
 /**
  * Delete a task
  */

@@ -44,6 +44,13 @@ export const TaskRepository = {
       where: { projectId },
     });
   },
+  listAllTask: async (userId: string) => {
+    return await prisma.task.findMany({
+      where:{
+        assignedToId:userId,
+      }
+    })
+  },
   assignTask: async (userId: string, taskId: string) => {
     return await prisma.task.update({
       where: { id: taskId },

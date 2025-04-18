@@ -116,6 +116,16 @@ export const getAllTasksService = async (projectId: string) => {
 };
 
 /**
+ * Get all tasks for a user
+ */
+export const listAllTasksService = async (userId: string) => {
+  if (!userId) {
+    throw new ApiError(404, 'User not found');
+  }
+  const tasks= await TaskRepository.listAllTask(userId);
+  return tasks;
+}
+/**
  * Delete a task
  */
 export const deleteTaskService = async (taskId: string) => {

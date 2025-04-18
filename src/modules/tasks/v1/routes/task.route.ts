@@ -12,9 +12,12 @@ import {
   syncTaskToCalendarController,
   updateTaskStatusController,
   updateTaskPriorityController,
+  listAllTaskController,
 } from '../controllers/task.controllers';
 
 const router = Router();
+
+router.get('/all-tasks', verifyJwt, listAllTaskController);
 
 router.post(
   '/:projectId',

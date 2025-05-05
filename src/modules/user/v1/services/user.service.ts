@@ -79,14 +79,14 @@ export const refreshTokenService = async (userId: string, token: string) => {
 
   return { accessToken };
 };
-export const logoutUserService = async (email: string) => {
-  const userFound = await userRepository.userByEmail(email);
+export const logoutUserService = async (id: string) => {
+  const userFound = await userRepository.userById(id);
 
   if (!userFound) {
     throw new ApiError(401, 'user not found');
   }
 
-  await userRepository.logoutUser(userFound.email);
+  await userRepository.logoutUser(userFound.id);
 };
 
 export const getAllUsersService = async () => {

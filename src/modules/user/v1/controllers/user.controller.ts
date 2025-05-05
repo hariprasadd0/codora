@@ -59,12 +59,12 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   logger.info('User logged in', { email: user.email });
   res.status(200).json({ message: 'Login Success', loggedUser, accessToken });
 });
-export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
-  const user = req.body;
-  await userService.logoutUserService(user);
+export const logoutUser = asyncHandler(async (req: Request, res: Response) => {const id = (req as any).user.userId;
+  await userService.logoutUserService(id);
   res.clearCookie('refreshToken');
   return res.status(200).json({ message: 'Logout Success' });
 });
+
 export const requestPasswordResetController = asyncHandler(
   //controller for password reset
   async (req: Request, res: Response) => {

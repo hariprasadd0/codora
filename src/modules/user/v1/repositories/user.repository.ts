@@ -62,10 +62,10 @@ export const userRepository = {
       },
     });
   },
-  logoutUser: async (email: string) => {
+  logoutUser: async (id: string) => {
     return await prisma.user.update({
       where: {
-        email: email,
+        id: id,
       },
       data: {
         refreshToken: '',

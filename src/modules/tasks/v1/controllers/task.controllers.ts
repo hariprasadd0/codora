@@ -58,7 +58,7 @@ export const updateTaskController = asyncHandler(
  */
 export const getTaskByIdController = asyncHandler(
   async (req: Request, res: Response) => {
-    const taskId = req.params.id;
+    const {taskId} = req.params;
     if (!taskId) throw new ApiError(400, 'Task ID not found');
 
     const task = await TaskServices.getTaskByIdService(taskId);

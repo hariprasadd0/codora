@@ -20,7 +20,7 @@ const router = Router();
 router.get('/all-tasks', verifyJwt, listAllTaskController);
 router.post('/project/:projectId', verifyJwt, validateSchema(createTaskSchema), createTaskController);
 router.get('/project/:projectId', verifyJwt, getAllTasksController);
-router.get('/:id', verifyJwt, getTaskByIdController);
+router.get('/task/:taskId', verifyJwt, getTaskByIdController);
 router.put('/:taskId', verifyJwt, updateTaskController);
 router.delete('/:taskId', verifyJwt, deleteTaskController);
 router.patch('/:taskId/assign', verifyJwt, assignTaskController);

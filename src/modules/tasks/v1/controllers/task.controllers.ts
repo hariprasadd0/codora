@@ -1,7 +1,7 @@
 import asyncHandler from '../../../../core/utils/asyncHandler';
-import { ApiError } from '../../../../core/utils/ApiError';
-import { Request, Response } from 'express';
-import { createTaskSchema, updateTaskSchema } from '../schema/task.schema';
+import {ApiError} from '../../../../core/utils/ApiError';
+import {Request, Response} from 'express';
+import {createTaskSchema, updateTaskSchema} from '../schema/task.schema';
 import * as TaskServices from '../services/task.service';
 
 /**
@@ -9,8 +9,7 @@ import * as TaskServices from '../services/task.service';
  */
 export const createTaskController = asyncHandler(
   async (req: Request, res: Response) => {
-    const id = req.params.projectId;
-    const projectId = id;
+    const projectId = req.params.projectId;
     if (!projectId) throw new ApiError(400, 'Project ID not found');
 
     const validatedTask = createTaskSchema.parse(req.body);
@@ -35,8 +34,7 @@ export const createTaskController = asyncHandler(
  */
 export const updateTaskController = asyncHandler(
   async (req: Request, res: Response) => {
-    const id = req.params.taskId;
-    const taskId = id;
+    const taskId = req.params.taskId;
     if (!taskId) throw new ApiError(400, 'Task ID not found');
 
     const updateData = updateTaskSchema.parse(req.body);

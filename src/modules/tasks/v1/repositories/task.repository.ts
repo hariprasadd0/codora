@@ -48,6 +48,14 @@ export const TaskRepository = {
     return await prisma.task.findMany({
       where:{
         assignedToId:userId,
+      },
+      include: {
+        project : {
+          select : {
+            id: true,
+            name : true
+          }
+        }
       }
     })
   },

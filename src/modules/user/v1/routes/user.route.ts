@@ -1,19 +1,19 @@
 import express from 'express';
 import passport from 'passport';
 import {
-  getUserById,
-  createUser,
-  updateUser,
-  loginUser,
-  logoutUser,
-  getAllUsers,
-  refreshToken,
-  requestPasswordResetController,
-  resetPasswordController,
-  calendarStatusController,
-  calendarEnableController,
-  calendarCallbackController,
-  calendarDisableController,
+    getUserById,
+    createUser,
+    updateUser,
+    loginUser,
+    logoutUser,
+    getAllUsers,
+    refreshToken,
+    requestPasswordResetController,
+    resetPasswordController,
+    calendarStatusController,
+    calendarEnableController,
+    calendarCallbackController,
+    calendarDisableController, getRecentActivity,
 } from '../controllers/user.controller';
 import { validateSchema } from '../../../../core/middlewares/validateSchema';
 import { createUserSchema, loginUserSchema } from '../schema/user.schema';
@@ -66,6 +66,7 @@ router.post('/calendar/enable', verifyJwt, calendarEnableController);
 router.post('/calendar/disable', verifyJwt, calendarDisableController);
 router.get('/google/calendar/redirect', calendarCallbackController);
 router.get('/calendar-status', verifyJwt, calendarStatusController);
+router.get('/recent',verifyJwt,getRecentActivity)
 router.patch('/me', verifyJwt, updateUser);
 router.get('/', verifyJwt, getAllUsers);
 router.get('/:id', verifyJwt, getUserById);

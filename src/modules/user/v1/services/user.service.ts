@@ -226,3 +226,7 @@ export const deleteInviteService = async (inviteId: string) => {
 export const addTeamMemberService = async (teamId: string, userId: string) => {
   return await userRepository.addTeamMember(teamId, userId);
 };
+
+export const RecentActivity = async(userId:string,)=>{
+    return await userRepository.getUserDailyTaskActivity(userId);
+}

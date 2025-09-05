@@ -160,4 +160,57 @@ export const userRepository = {
       },
     });
   },
+   getUserDailyTaskActivity : async (userId: string) => {
+        // Step 1: Find all teamIds the user belongs to
+        const teams = await prisma.teamMember.findMany({
+            where: { userId },
+            select: { teamId: true },
+        });
+
+        if (teams.length === 0) {
+            throw new Error("User does not belong to any team");
+        }
+
+        const teamIds = teams.map((t) => t.teamId);
+
+        // Step 2: Define today's range
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        // Step 3: Query tasks across all teams
+        const [newTasks, completedTasks] = await Promise.all([
+            // Tasks created today
+            prisma.task.findMany({
+                where: {
+                    project: { teamId: { in: teamIds } },
+                    createdAt: { gte: startOfDay, lte: endOfDay },
+                },
+                include: {
+                    assignedTo: { select: { id: true, name: true, email: true } },
+                    project: { select: { id: true, name: true, teamId: true } },
+                },
+                orderBy: { createdAt: "desc" },
+            }),
+
+            // Tasks completed today
+            prisma.task.findMany({
+                where: {
+                    project: { teamId: { in: teamIds } },
+                    status: "COMPLETED",
+                    updatedAt: { gte: startOfDay, lte: endOfDay },
+                },
+                include: {
+                    assignedTo: { select: { id: true, name: true, email: true } },
+                    project: { select: { id: true, name: true, teamId: true } },
+                },
+                orderBy: { updatedAt: "desc" },
+            }),
+        ]);
+
+        return { newTasks, completedTasks };
+    }
+
 };

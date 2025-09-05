@@ -255,3 +255,10 @@ export const calendarDisableController = asyncHandler(
     res.status(200).json({ message: 'Google Calendar disabled' });
   }
 );
+
+export const getRecentActivity=asyncHandler(async(req:Request, res: Response) => {
+    const userId = (req as any).user.userId;
+
+    const data = await userService.RecentActivity(userId);
+     res.status(200).json({data})
+})
